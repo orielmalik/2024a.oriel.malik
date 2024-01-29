@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import reactor.core.publisher.Mono;
 
-@RestController
+//@RestController
 @RequestMapping(path = {"/hello"})
 public class HelloController {
 	private Demo demo;
