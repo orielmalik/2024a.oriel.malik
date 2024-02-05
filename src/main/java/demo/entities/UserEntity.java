@@ -1,15 +1,13 @@
-package demo;
+package demo.entities;
 
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-enum Role {
-	ADMIN,
-	SUPERAPP_USER,
-	MINIAPP_USER
-}
+import demo.Role;
+
+
 
 @Document(collection = "Users")
 public class UserEntity {
@@ -22,6 +20,7 @@ public class UserEntity {
 	private String gender;
 	private String birthDate;
 	private String location;
+	private String avatar;
 	private Role role;
 	
 	
@@ -107,11 +106,20 @@ public class UserEntity {
 	public void setRole(Role role) {
 		this.role = role;
 	}
-	
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
 	@Override
 	public String toString() {
-		return "UserEntity [id=" + id + ", createdAt=" + createdAt + ", email=" + email
+		return "UserEntity [id=" + id + ", createdAt=" + createdAt + ", userName=" + userName + ", email=" + email
 				+ ", phoneNumber=" + phoneNumber + ", status=" + status + ", gender=" + gender + ", birthDate="
-				+ birthDate + ", location=" + location + "]";
+				+ birthDate + ", location=" + location + ", avatar=" + avatar + ", role=" + role + "]";
 	}
+	
 }
