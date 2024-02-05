@@ -39,8 +39,9 @@ public class QuizServiceImplementation implements QuizService {
 	@Override
 	public Mono<Void> updateQuiz(String id, QuizBoundary update) {
 		return this.quizCrud.findById(id).map(entity -> {
-			// TODO edit
-
+			entity.setNotes(update.getNotes());
+			entity.setQuestions(update.getQuestions());
+			entity.setOptionalAnswers(update.getOptionalAnswers());
 			return entity;
 		}).flatMap(this.quizCrud::save).map(QuizBoundary::new).log().then();
 	}
