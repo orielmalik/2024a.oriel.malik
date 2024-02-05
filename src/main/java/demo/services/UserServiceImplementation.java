@@ -3,9 +3,9 @@ package demo.services;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import demo.UserCrud;
 import demo.boundries.NewUserBoundary;
 import demo.boundries.UserBoundary;
+import demo.interfaces.UserCrud;
 import demo.interfaces.UserService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -44,14 +44,6 @@ public class UserServiceImplementation implements UserService{
         	.map(UserBoundary::new)
         	.log();
 	}	
-	
-	@Override
-	public Flux<UserBoundary> getAll() {
-		return this.userCrud
-			.findAll()
-			.map(entity -> new UserBoundary(entity))
-			.log();
-	}
 
 	@Override
 	public Mono<Void> update(String superapp, String email, UserBoundary user) {
@@ -69,10 +61,5 @@ public class UserServiceImplementation implements UserService{
 			.map(UserBoundary::new)
 			.log()
 			.then();
-	}
-
-	@Override
-	public Mono<Void> deleteAll() {
-		return this.userCrud.deleteAll().log();
 	}
 }

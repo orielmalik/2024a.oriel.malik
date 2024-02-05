@@ -1,4 +1,4 @@
-package demo;
+package demo.interfaces;
 
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 

@@ -9,10 +9,6 @@ public interface UserService {
 	public Mono<NewUserBoundary> create(NewUserBoundary user);
 	
 	public Mono<UserBoundary> login(String superapp, String email);
-//	
-	public Flux<UserBoundary> getAll();
-//	
-	public Mono<Void> deleteAll();
-//	
+	
 	public Mono<Void> update(String superapp, String email, UserBoundary user);
 }

@@ -1,8 +1,8 @@
 package demo.boundries;
 
 import demo.Role;
-import demo.UserId;
 import demo.entities.UserEntity;
+import demo.entities.UserId;
 
 public class UserBoundary {
 	private UserId userId;

@@ -1,4 +1,4 @@
-package demo;
+package demo.entities;
 
 public class UserId {
 	private String superapp;
