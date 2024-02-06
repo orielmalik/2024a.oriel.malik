@@ -6,6 +6,7 @@ public class ObjectIdBoundary {
 	
 	public ObjectIdBoundary() {
 	}
+	
 	public ObjectIdBoundary(String superapp, String id) {
 		super();
 		this.superapp = superapp;
