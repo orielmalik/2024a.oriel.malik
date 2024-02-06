@@ -3,6 +3,9 @@ package demo;
 public class CreatedByBoundary {
 	private UserId userId;
 	
+	public CreatedByBoundary() {
+	}
+	
 	public CreatedByBoundary(String superapp, String email) {
 		this.userId = new UserId(superapp,email);
 	}

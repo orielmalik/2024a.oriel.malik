@@ -3,7 +3,9 @@ package demo;
 public class ObjectIdBoundary {
 	private String superapp;
 	private String id;
-
+	
+	public ObjectIdBoundary() {
+	}
 	public ObjectIdBoundary(String superapp, String id) {
 		super();
 		this.superapp = superapp;
