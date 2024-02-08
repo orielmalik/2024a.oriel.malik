@@ -1,15 +1,19 @@
-package demo;
+package demo.boundries;
 
 import java.util.Date;
 import java.util.Map;
 
+import demo.CreatedBy;
+import demo.ObjectId;
+import demo.entities.ObjectEntity;
+
 public class ObjectBoundary {
-	private ObjectIdBoundary objectId;
+	private ObjectId objectId;
 	private String type;
 	private String alias;
 	private boolean active;
 	private Date createdTimestamp;
-	private CreatedByBoundary createdBy;
+	private CreatedBy createdBy;
 	private Map<String, Object> objectDetails;
 
 	public ObjectBoundary() {
@@ -21,7 +25,7 @@ public class ObjectBoundary {
 	}
 
 	public ObjectBoundary(String type, String alias, boolean active, Date createdTimestamp,
-			CreatedByBoundary createdBy, Map<String, Object> objectDetails) {
+			CreatedBy createdBy, Map<String, Object> objectDetails) {
 		super();
 		this.type = type;
 		this.alias = alias;
@@ -31,11 +35,11 @@ public class ObjectBoundary {
 		this.objectDetails = objectDetails;
 	}
 
-	public ObjectIdBoundary getObjectId() {
+	public ObjectId getObjectId() {
 		return objectId;
 	}
 
-	public void setObjectId(ObjectIdBoundary objectId) {
+	public void setObjectId(ObjectId objectId) {
 		this.objectId = objectId;
 	}
 
@@ -71,11 +75,11 @@ public class ObjectBoundary {
 		this.createdTimestamp = createdTimestamp;
 	}
 
-	public CreatedByBoundary getCreatedBy() {
+	public CreatedBy getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(CreatedByBoundary createdBy) {
+	public void setCreatedBy(CreatedBy createdBy) {
 		this.createdBy = createdBy;
 	}
 

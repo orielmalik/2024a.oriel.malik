@@ -1,5 +1,6 @@
-package demo;
+package demo.interfaces;
 
+import demo.boundries.ObjectBoundary;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

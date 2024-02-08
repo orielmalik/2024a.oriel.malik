@@ -1,21 +1,26 @@
-package demo;
+package demo.boundries;
 
 import java.util.Date;
 import java.util.Map;
 
-public class MIniAppCommandBoundary {
+import demo.CommandId;
+import demo.ObjectId;
+import demo.UserId;
+import demo.entities.MiniAppCommandEntity;
+
+public class MiniAppCommandBoundary {
 
 	private CommandId commandId;
 	private UserId invokedBy;
-	private ObjectIdBoundary TargetObject;
+	private ObjectId TargetObject;
 	private String TargetCommand;//command-"do something"
 	private Date invocationTimeStamp;
 	private Map<String,Object> commandAttributes;
 	
-	public MIniAppCommandBoundary() {
+	public MiniAppCommandBoundary() {
 	}
 	
-	public MIniAppCommandBoundary(CommandId cID, UserId uID,ObjectIdBoundary Oid,String tar,Date d,Map<String,Object> co)
+	public MiniAppCommandBoundary(CommandId cID, UserId uID,ObjectId Oid,String tar,Date d,Map<String,Object> co)
 	{
 		this.commandId=cID;
 		this.invokedBy=uID;
@@ -24,7 +29,7 @@ public class MIniAppCommandBoundary {
 		setInvocationTimeStamp(d);
 		this.commandAttributes =co;
 	}
-	public MIniAppCommandBoundary(MiniAppCommandEntity m)
+	public MiniAppCommandBoundary(MiniAppCommandEntity m)
 	{
 		this.commandId=m.getCommandId();
 		this.invokedBy=m.getUserid();
@@ -62,10 +67,10 @@ public class MIniAppCommandBoundary {
 	public void setUserid(UserId userid) {
 		invokedBy = userid;
 	}
-	public ObjectIdBoundary getObjectId() {
+	public ObjectId getObjectId() {
 		return TargetObject;
 	}
-	public void setObjectId(ObjectIdBoundary objectId) {
+	public void setObjectId(ObjectId objectId) {
 		TargetObject = objectId;
 	}
 
@@ -93,11 +98,11 @@ public class MIniAppCommandBoundary {
 		this.invokedBy = invokedBy;
 	}
 
-	public ObjectIdBoundary getTargetObject() {
+	public ObjectId getTargetObject() {
 		return TargetObject;
 	}
 
-	public void setTargetObject(ObjectIdBoundary targetObject) {
+	public void setTargetObject(ObjectId targetObject) {
 		TargetObject = targetObject;
 	}
 

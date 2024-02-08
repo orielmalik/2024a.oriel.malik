@@ -1,4 +1,4 @@
-package demo;
+package demo.controllers;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import demo.boundries.ObjectBoundary;
+import demo.interfaces.ObjectService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

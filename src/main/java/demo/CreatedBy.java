@@ -1,12 +1,12 @@
 package demo;
 
-public class CreatedByBoundary {
+public class CreatedBy {
 	private UserId userId;
 	
-	public CreatedByBoundary() {
+	public CreatedBy() {
 	}
 	
-	public CreatedByBoundary(String superapp, String email) {
+	public CreatedBy(String superapp, String email) {
 		this.userId = new UserId(superapp,email);
 	}
 

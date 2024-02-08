@@ -1,16 +1,19 @@
-package demo;
+package demo.entities;
 
 import java.util.Date;
 import java.util.Map;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import demo.CommandId;
+import demo.ObjectId;
+import demo.UserId;
 @Document(collection = "Comannd")
 
 public class MiniAppCommandEntity {
 
 	private CommandId commandId;
 	private UserId invokedBy;
-	private ObjectIdBoundary TargetObject;
+	private ObjectId TargetObject;
 	private String TargetCommand;//command-"do something"
 	private Date invocationTimeStamp;
 	private Map<String,Object> commandAttributes;
@@ -32,10 +35,10 @@ public class MiniAppCommandEntity {
 	public void setUserid(UserId userid) {
 		invokedBy = userid;
 	}
-	public ObjectIdBoundary getObjectId() {
+	public ObjectId getObjectId() {
 		return TargetObject;
 	}
-	public void setObjectId(ObjectIdBoundary objectId) {
+	public void setObjectId(ObjectId objectId) {
 		TargetObject = objectId;
 	}
 

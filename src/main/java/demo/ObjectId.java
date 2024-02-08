@@ -1,13 +1,13 @@
 package demo;
 
-public class ObjectIdBoundary {
+public class ObjectId {
 	private String superapp;
 	private String id;
 	
-	public ObjectIdBoundary() {
+	public ObjectId() {
 	}
 	
-	public ObjectIdBoundary(String superapp, String id) {
+	public ObjectId(String superapp, String id) {
 		super();
 		this.superapp = superapp;
 		this.id = id;
