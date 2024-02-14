@@ -3,7 +3,6 @@ package demo.services;
 import org.springframework.stereotype.Service;
 
 import demo.boundries.MiniAppCommandBoundary;
-import demo.boundries.ObjectBoundary;
 import demo.boundries.UserBoundary;
 import demo.interfaces.AdminService;
 import demo.interfaces.MiniAppCommandCrud;
@@ -32,6 +31,17 @@ public class AdminServiceImplementation implements AdminService{
 	}
 
 	@Override
+	public Mono<Void> deleteAllObjects() {
+		return this.objectCrud.deleteAll().log();
+	}
+
+	@Override
+	public Mono<Void> delteAllCommands() {
+		this.miniAppCommandCrud.deleteAll().log();
+		return null;
+	}
+	
+	@Override
 	public Flux<UserBoundary> fetchAllUsers() {
 		return this.userCrud
 				.findAll()
@@ -40,23 +50,22 @@ public class AdminServiceImplementation implements AdminService{
 	}
 
 	@Override
-	public Mono<Void> deleteAllObjects() {
-		return this.objectCrud.deleteAll().log();
+	public Flux<MiniAppCommandBoundary> fetchAllMiniappCommands() {
+		return this.miniAppCommandCrud
+				.findAll()
+				.map(MiniAppCommandBoundary::new)
+				.log();
 	}
+	
 
-	@Override
-	public Flux<ObjectBoundary> fetchAllObjects() {
-		return this.objectCrud
-			.findAll()
-			.map(ObjectBoundary::new)
-			.log();
-	}
+//	@Override
+//	public Flux<MiniAppCommandBoundary> fetchMiniappCommand(String miniAppName) {
+//		
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
-	@Override
-	public Mono<Void> delteAllCommands() {
-		this.miniAppCommandCrud.deleteAll().log();
-		return null;
-	}
+	
 
 //	@Override
 //	public Flux<MiniAppCommandBoundary> fetchAllCommands() {

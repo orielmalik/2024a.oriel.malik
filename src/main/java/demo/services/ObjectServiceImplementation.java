@@ -31,10 +31,12 @@ public class ObjectServiceImplementation implements ObjectService {
 		if (object.getObjectId() == null) {
 			object.setObjectId(new ObjectId());
 		}
-		object.getObjectId().setId(UUID.randomUUID().toString());
-		object.getObjectId().setSuperapp(superAppName);
+		object.getObjectId()
+			.setId(UUID.randomUUID().toString())
+			.setSuperapp(superAppName);
 		object.setCreatedTimestamp(new Date());
 		object.getCreatedBy().getUserId().setSuperapp(superAppName);
+		
 		return Mono.just(object).flatMap(boundary -> {
 			if (boundary.getType() == null || boundary.getObjectDetails() == null || boundary.getCreatedBy() == null
 					|| boundary.getCreatedBy().getUserId() == null

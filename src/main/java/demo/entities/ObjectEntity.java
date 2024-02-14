@@ -27,72 +27,81 @@ public class ObjectEntity {
 		return objectId;
 	}
 
-	public void setObjectId(String objectId) {
+	public ObjectEntity setObjectId(String objectId) {
 		this.objectId = objectId;
+		return this;
 	}
 
 	public String getSuperApp() {
 		return superApp;
 	}
 
-	public void setSuperApp(String superApp) {
+	public ObjectEntity setSuperApp(String superApp) {
 		this.superApp = superApp;
+		return this;
 	}
 
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public ObjectEntity setType(String type) {
 		this.type = type;
+		return this;
 	}
 
 	public String getAlias() {
 		return alias;
 	}
 
-	public void setAlias(String alias) {
+	public ObjectEntity setAlias(String alias) {
 		this.alias = alias;
+		return this;
 	}
 
 	public boolean getActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public ObjectEntity setActive(boolean active) {
 		this.active = active;
+		return this;
 	}
 
 	public Date getCreatedTimestamp() {
 		return createdTimestamp;
 	}
 
-	public void setCreatedTimestamp(Date createdTimestamp) {
+	public ObjectEntity setCreatedTimestamp(Date createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
+		return this;
 	}
 
 	public Map<String, Object> getObjectDetails() {
 		return objectDetails;
 	}
 
-	public void setObjectDetails(Map<String, Object> objectDetails) {
+	public ObjectEntity setObjectDetails(Map<String, Object> objectDetails) {
 		this.objectDetails = objectDetails;
+		return this;
 	}
 
 	public String getUserIdSuperapp() {
 		return userIdSuperapp;
 	}
 
-	public void setUserIdSuperapp(String userIdSuperapp) {
+	public ObjectEntity setUserIdSuperapp(String userIdSuperapp) {
 		this.userIdSuperapp = userIdSuperapp;
+		return this;
 	}
 
 	public String getUserIdEmail() {
 		return userIdEmail;
 	}
 
-	public void setUserIdEmail(String userIdEmail) {
+	public ObjectEntity setUserIdEmail(String userIdEmail) {
 		this.userIdEmail = userIdEmail;
+		return this;
 	}
 
 	@Override

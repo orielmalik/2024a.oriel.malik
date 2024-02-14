@@ -15,7 +15,9 @@ public interface AdminService {
 	
 	public Flux<UserBoundary> fetchAllUsers();
 	
-	public Flux<ObjectBoundary> fetchAllObjects();
+//	public Flux<MiniAppCommandBoundary> fetchMiniappCommand(String miniAppName);
+	
+	public  Flux<MiniAppCommandBoundary> fetchAllMiniappCommands();
 	
 //	public Flux<MiniAppCommandBoundary> fetchAllCommands();
 }

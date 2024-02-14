@@ -21,10 +21,10 @@ public class UserBoundary {
 		if (user.getId() != null)
 			this.userId.setSuperapp(splitedUserId[0]).setEmail(splitedUserId[1]);
 		
-		this.setUserName(user.getUserName());
-		this.setEmail(user.getEmail());
-		this.setRole(user.getRole());
-		this.setAvatar(user.getAvatar());
+		this.setUserName(user.getUserName())
+			.setEmail(user.getEmail())
+			.setRole(user.getRole())
+			.setAvatar(user.getAvatar());
 	}
 		
 	public String getAvatar() {
@@ -75,11 +75,11 @@ public class UserBoundary {
 	public UserEntity toEntity() {
 		UserEntity entity = new UserEntity();
 		
-		entity.setId(this.getUserId().toString());
-		entity.setUserName(this.getUserName());
-		entity.setEmail(this.getEmail());
-		entity.setRole(this.getRole());
-		entity.setAvatar(this.getAvatar());
+		entity.setId(this.getUserId().toString())
+			.setUserName(this.getUserName())
+			.setEmail(this.getEmail())
+			.setRole(this.getRole())
+			.setAvatar(this.getAvatar());
 		
 		return entity;
 	}

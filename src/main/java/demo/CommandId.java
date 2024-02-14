@@ -2,39 +2,45 @@ package demo;
 
 public class CommandId {
     private String superapp;
-    private String miniApp;
-    private String CommandId;
+    private String miniapp;
+    private String id;
 
     public CommandId() {
     }
 
-    public CommandId(String superapp, String miniApp, String inCommandId)
+    public CommandId(String superapp, String miniapp, String id)
     {
-        this.superapp = superapp;
-        this.miniApp = miniApp;
-        this.setCommandId(inCommandId);
+        this.setSuperapp(superapp);
+        this.setMiniapp(miniapp);
+        this.setId(id);
     }
 
     public String getSuperapp() {
         return superapp;
     }
-    public void setSuperapp(String superapp) {
+    public CommandId setSuperapp(String superapp) {
         this.superapp = superapp;
-    }
-    public String getMiniApp() {
-        return miniApp;
-    }
-    public void setMiniApp(String miniApp) {
-        this.miniApp = miniApp;
+        return this;
     }
 
-	public String getCommandId() {
-		return CommandId;
+	public String getMiniapp() {
+		return miniapp;
 	}
 
-	public void setCommandId(String commandId) {
-		CommandId = commandId;
+	public CommandId setMiniapp(String miniapp) {
+		this.miniapp = miniapp;
+		return this;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public CommandId setId(String id) {
+		this.id = id;
+		return this;
 	}
  
+    
 
 }

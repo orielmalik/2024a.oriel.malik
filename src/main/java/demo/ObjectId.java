@@ -17,16 +17,18 @@ public class ObjectId {
 		return superapp;
 	}
 
-	public void setSuperapp(String superapp) {
+	public ObjectId setSuperapp(String superapp) {
 		this.superapp = superapp;
+		return this;
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public ObjectId setId(String id) {
 		this.id = id;
+		return this;
 	}
 
 	@Override

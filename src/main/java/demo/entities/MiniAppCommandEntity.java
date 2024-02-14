@@ -2,76 +2,81 @@ package demo.entities;
 
 import java.util.Date;
 import java.util.Map;
+
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import demo.CommandId;
 import demo.ObjectId;
-@Document(collection = "Comannd")
 
+@Document(collection = "Commands")
 public class MiniAppCommandEntity {
-
-	private CommandId commandId;
+	@Id String commandId;
+	private String command;
+	private ObjectId targetObject;
+	private Date invocationTimestamp;
 	private UserId invokedBy;
-	private ObjectId TargetObject;
-	private String TargetCommand;//command-"do something"
-	private Date invocationTimeStamp;
 	private Map<String,Object> commandAttributes;
 	
-	
-	public MiniAppCommandEntity() {}
-	
+	public MiniAppCommandEntity() {
+	}
 
-	public CommandId getCommandId() {
+	public String getCommandId() {
 		return commandId;
 	}
-	
-	public void setCommandId(CommandId commandId) {
+
+	public MiniAppCommandEntity setCommandId(String commandId) {
 		this.commandId = commandId;
+		return this;
 	}
-	public UserId getUserid() {
+
+	public String getCommand() {
+		return command;
+	}
+
+	public MiniAppCommandEntity setCommand(String command) {
+		this.command = command;
+		return this;
+	}
+
+	public ObjectId getTargetObject() {
+		return targetObject;
+	}
+
+	public MiniAppCommandEntity setTargetObject(ObjectId targetObject) {
+		this.targetObject = targetObject;
+		return this;
+	}
+
+	public Date getInvocationTimestamp() {
+		return invocationTimestamp;
+	}
+
+	public MiniAppCommandEntity setInvocationTimestamp(Date invocationTimestamp) {
+		this.invocationTimestamp = invocationTimestamp;
+		return this;
+	}
+
+	public UserId getInvokedBy() {
 		return invokedBy;
 	}
-	public void setUserid(UserId userid) {
-		invokedBy = userid;
-	}
-	public ObjectId getObjectId() {
-		return TargetObject;
-	}
-	public void setObjectId(ObjectId objectId) {
-		TargetObject = objectId;
+
+	public MiniAppCommandEntity setInvokedBy(UserId invokedBy) {
+		this.invokedBy = invokedBy;
+		return this;
 	}
 
-	public String getTargetCommand() {
-		return TargetCommand;
-	}
-
-	public void setTargetCommand(String objectIdBoundary) {
-		TargetCommand = objectIdBoundary;
-	}
-
-
-	public Date getInvocationTimeStamp() {
-		return invocationTimeStamp;
-	}
-
-
-	public void setInvocationTimeStamp(Date invocationTimeStamp) {
-		this.invocationTimeStamp = invocationTimeStamp;
-	}
-
-
-	public Map<String,Object> getCommandAttributes() {
+	public Map<String, Object> getCommandAttributes() {
 		return commandAttributes;
 	}
 
-
-	public void setCommandAttributes(Map<String,Object> commandAttributes) {
+	public MiniAppCommandEntity setCommandAttributes(Map<String, Object> commandAttributes) {
 		this.commandAttributes = commandAttributes;
+		return this;
 	}
-
-
-
 	
+	
+	
+	
+
 	
 	
 	

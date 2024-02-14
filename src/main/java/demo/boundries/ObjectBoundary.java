@@ -21,13 +21,18 @@ public class ObjectBoundary {
 	}
 
 	public ObjectBoundary(ObjectEntity entity) {
-		this.setObjectId(new ObjectId(entity.getSuperApp(), entity.getObjectId()));
-		this.setType(entity.getType());
-		this.setAlias(entity.getAlias());
-		this.setActive(entity.getActive());
-		this.setCreatedTimestamp(entity.getCreatedTimestamp());
-		this.setCreatedBy(new CreatedBy(entity.getUserIdSuperapp(), entity.getUserIdEmail()));
-		this.setObjectDetails(entity.getObjectDetails());
+		String splitedObjectId[] = entity.getObjectId().split(":");
+		
+		this.objectId = new ObjectId();
+		if (entity.getObjectId() != null)
+			this.objectId.setSuperapp(splitedObjectId[0]).setId(splitedObjectId[1]);
+		
+		this.setType(entity.getType())
+			.setAlias(entity.getAlias())
+			.setActive(entity.getActive())
+			.setCreatedTimestamp(entity.getCreatedTimestamp())
+			.setCreatedBy(new CreatedBy(entity.getUserIdSuperapp(), entity.getUserIdEmail()))
+			.setObjectDetails(entity.getObjectDetails());
 	}
 
 	public ObjectBoundary(String type, String alias, boolean active, Date createdTimestamp, CreatedBy createdBy,
@@ -45,70 +50,77 @@ public class ObjectBoundary {
 		return objectId;
 	}
 
-	public void setObjectId(ObjectId objectId) {
+	public ObjectBoundary setObjectId(ObjectId objectId) {
 		this.objectId = objectId;
+		return this;
 	}
 
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public ObjectBoundary setType(String type) {
 		this.type = type;
+		return this;
 	}
 
 	public String getAlias() {
 		return alias;
 	}
 
-	public void setAlias(String alias) {
+	public ObjectBoundary setAlias(String alias) {
 		this.alias = alias;
+		return this;
 	}
 
 	public boolean getActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public ObjectBoundary setActive(boolean active) {
 		this.active = active;
+		return this;
 	}
 
 	public Date getCreatedTimestamp() {
 		return createdTimestamp;
 	}
 
-	public void setCreatedTimestamp(Date createdTimestamp) {
+	public ObjectBoundary setCreatedTimestamp(Date createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
+		return this;
 	}
 
 	public CreatedBy getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(CreatedBy createdBy) {
+	public ObjectBoundary setCreatedBy(CreatedBy createdBy) {
 		this.createdBy = createdBy;
+		return this;
 	}
 
 	public Map<String, Object> getObjectDetails() {
 		return objectDetails;
 	}
 
-	public void setObjectDetails(Map<String, Object> objectDetails) {
+	public ObjectBoundary setObjectDetails(Map<String, Object> objectDetails) {
 		this.objectDetails = objectDetails;
+		return this;
 	}
 
 	public ObjectEntity toEntity() {
 		ObjectEntity entity = new ObjectEntity();
-
-		entity.setObjectId(this.getObjectId().getId());
-		entity.setSuperApp(this.getObjectId().getSuperapp());
-		entity.setCreatedTimestamp(this.getCreatedTimestamp());
-		entity.setType(this.getType());
-		entity.setActive(this.getActive());
-		entity.setAlias(this.getAlias());
-		entity.setObjectDetails(this.getObjectDetails());
-		entity.setUserIdEmail(this.getCreatedBy().getUserId().getEmail());
-		entity.setUserIdSuperapp(this.getCreatedBy().getUserId().getSuperapp());
+		
+		entity.setObjectId(this.getObjectId().getSuperapp() + ":" + this.getObjectId().getId())
+			.setSuperApp(this.getObjectId().getSuperapp())
+			.setCreatedTimestamp(this.getCreatedTimestamp())
+			.setType(this.getType())
+			.setActive(this.getActive())
+			.setAlias(this.getAlias())
+			.setObjectDetails(this.getObjectDetails())
+			.setUserIdEmail(this.getCreatedBy().getUserId().getEmail())
+			.setUserIdSuperapp(this.getCreatedBy().getUserId().getSuperapp());
 
 		return entity;
 	}

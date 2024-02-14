@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import demo.boundries.ObjectBoundary;
+import demo.boundries.MiniAppCommandBoundary;
 import demo.boundries.UserBoundary;
 import demo.interfaces.AdminService;
 import reactor.core.publisher.Flux;
@@ -31,15 +31,16 @@ public class AdminController {
 		return this.adminService.fetchAllUsers();
 	}
 	
+	@GetMapping(path = {"/miniapp"},produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
+	public Flux<MiniAppCommandBoundary> getAllCommands() {
+		return this.adminService.fetchAllMiniappCommands();
+	}
+	
+	
 	@DeleteMapping(path = {"/users"})
 	public Mono<Void> deleteAllUsers() {
 		return this.adminService.deleteAllUsers();
 	}	
-	
-	@GetMapping(path = {"/objects"},produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
-	public Flux<ObjectBoundary> getAllObjects() {
-		return this.adminService.fetchAllObjects();
-	}
 	
 	@DeleteMapping(path = {"/objects"})
 	public Mono<Void> deleteAllObjects() {
@@ -51,10 +52,6 @@ public class AdminController {
 		return this.adminService.delteAllCommands();
 	}
 	
-//	@GetMapping(path = {"/miniapp"},produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
-//	public Flux<MiniAppCommandBoundary> getAllCommands() {
-//		return this.adminService.fetchAllCommands();
-//	}
-	
+
 	
 }
