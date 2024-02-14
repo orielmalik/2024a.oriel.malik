@@ -1,5 +1,7 @@
 package demo;
 
+import demo.entities.UserId;
+
 public class CreatedBy {
 	private UserId userId;
 	

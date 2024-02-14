@@ -1,13 +1,9 @@
 package demo.entities;
 
 import java.util.Date;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import demo.Role;
-
-
 
 @Document(collection = "Users")
 public class UserEntity {
@@ -31,95 +27,98 @@ public class UserEntity {
 		return id;
 	}
 
-	public void setId(String id) {
+	public UserEntity setId(String id) {
 		this.id = id;
+		return this;
 	}
 
 	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(Date createdAt) {
+	public UserEntity setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+		return this;
 	}
 	
 	public String getUserName() {
 		return userName;
 	}
 	
-	public void setUserName(String userName) {
+	public UserEntity setUserName(String userName) {
 		this.userName = userName;
+		return this;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public UserEntity setEmail(String email) {
 		this.email = email;
+		return this;
 	}
 
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
+	public UserEntity setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+		return this;
 	}
 
 	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public UserEntity setStatus(String status) {
 		this.status = status;
+		return this;
 	}
 
 	public String getGender() {
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public UserEntity setGender(String gender) {
 		this.gender = gender;
+		return this;
 	}
 
 	public String getBirthDate() {
 		return birthDate;
 	}
 
-	public void setBirthDate(String birthDate) {
+	public UserEntity setBirthDate(String birthDate) {
 		this.birthDate = birthDate;
+		return this;
 	}
 
 	public String getLocation() {
 		return location;
 	}
 
-	public void setLocation(String location) {
+	public UserEntity setLocation(String location) {
 		this.location = location;
+		return this;
 	}
 	
 	public Role getRole() {
 		return this.role;
 	}
 	
-	public void setRole(Role role) {
+	public UserEntity setRole(Role role) {
 		this.role = role;
+		return this;
 	}
 
 	public String getAvatar() {
 		return avatar;
 	}
 
-	public void setAvatar(String avatar) {
+	public UserEntity setAvatar(String avatar) {
 		this.avatar = avatar;
+		return this;
 	}
-
-	@Override
-	public String toString() {
-		return "UserEntity [id=" + id + ", createdAt=" + createdAt + ", userName=" + userName + ", email=" + email
-				+ ", phoneNumber=" + phoneNumber + ", status=" + status + ", gender=" + gender + ", birthDate="
-				+ birthDate + ", location=" + location + ", avatar=" + avatar + ", role=" + role + "]";
-	}
-	
 }

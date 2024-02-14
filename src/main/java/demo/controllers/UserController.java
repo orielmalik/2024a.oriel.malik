@@ -26,7 +26,7 @@ public class UserController {
 	}
 	
 	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})	
-	public Mono<NewUserBoundary> create(@RequestBody NewUserBoundary user) {
+	public Mono<UserBoundary> create(@RequestBody NewUserBoundary user) {
 		return this.userService.create(user);
 	}
 	

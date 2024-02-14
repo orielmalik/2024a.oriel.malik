@@ -1,8 +1,8 @@
 package demo.boundries;
 
 import demo.Role;
-import demo.UserId;
 import demo.entities.UserEntity;
+import demo.entities.UserId;
 
 public class UserBoundary {
 	private UserId userId;
@@ -16,58 +16,72 @@ public class UserBoundary {
 	
 	public UserBoundary(UserEntity user) {
 		String splitedUserId[] = user.getId().split(":");
-		this.userId = new UserId(splitedUserId[0], splitedUserId[1]);
+		
+		this.userId = new UserId();
+		if (user.getId() != null)
+			this.userId.setSuperapp(splitedUserId[0]).setEmail(splitedUserId[1]);
+		
 		this.setUserName(user.getUserName());
 		this.setEmail(user.getEmail());
 		this.setRole(user.getRole());
 		this.setAvatar(user.getAvatar());
 	}
 		
-	@Override
-	public String toString() {
-		return "UserBoundary [userId=" + userId + ", email=" + email + ", role=" + role + ", userName=" + userName
-				+ ", avatar=" + avatar + "]";
-	}
-
 	public String getAvatar() {
 		return avatar;
 	}
 
-	public void setAvatar(String avatar) {
+	public UserBoundary setAvatar(String avatar) {
 		this.avatar = avatar;
+		return this;
 	}
 
 	public UserId getUserId() {
 		return this.userId;
 	}
 
-	public void setUserId(UserId userId) {
+	public UserBoundary setUserId(UserId userId) {
 		this.userId = userId;
+		return this;
 	}
 
 	public String getUserName() {
 		return userName;
 	}
 
-	public void setUserName(String userName) {
+	public UserBoundary setUserName(String userName) {
 		this.userName = userName;
+		return this;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public UserBoundary setEmail(String email) {
 		this.email = email;
+		return this;
 	}
 
 	public Role getRole() {
 		return this.role;
 	}
 	
-	public void setRole(Role role) {
+	public UserBoundary setRole(Role role) {
 		this.role = role;
+		return this;
 	}
 	
+	public UserEntity toEntity() {
+		UserEntity entity = new UserEntity();
+		
+		entity.setId(this.getUserId().toString());
+		entity.setUserName(this.getUserName());
+		entity.setEmail(this.getEmail());
+		entity.setRole(this.getRole());
+		entity.setAvatar(this.getAvatar());
+		
+		return entity;
+	}
 
 }

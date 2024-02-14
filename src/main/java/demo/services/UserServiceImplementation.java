@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 
 import demo.boundries.NewUserBoundary;
 import demo.boundries.UserBoundary;
+import demo.entities.UserId;
 import demo.interfaces.UserCrud;
 import demo.interfaces.UserService;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -25,20 +25,23 @@ public class UserServiceImplementation implements UserService{
 	}
 	
 	@Override
-	public Mono<NewUserBoundary> create(NewUserBoundary user) {
-		if (user.getEmail() == null)
-			return Mono.empty();
-		user.setId(suparappName + ":" + user.getEmail());
+	public Mono<UserBoundary> create(NewUserBoundary user) {
+		UserBoundary ub = new UserBoundary();
+		UserId id = new UserId(suparappName, user.getEmail());
+		ub.setUserId(id)
+			.setEmail(user.getEmail())
+			.setRole(user.getRole())
+			.setUserName(user.getUserName())
+			.setAvatar(user.getAvatar());
+		
 		return this.userCrud
-				.save(user.toEntity())
-				.map(NewUserBoundary::new)
+				.save(ub.toEntity())
+				.map(UserBoundary::new)
 				.log();
 	}
 
 	@Override
 	public Mono<UserBoundary> login(String superapp, String email) {
-		if (superapp == null || email == null)
-			return Mono.empty();
         return this.userCrud
         	.findById(superapp + ":" + email)
         	.map(UserBoundary::new)
@@ -47,8 +50,7 @@ public class UserServiceImplementation implements UserService{
 
 	@Override
 	public Mono<Void> update(String superapp, String email, UserBoundary user) {
-		if (superapp == null || email == null)
-			return Mono.empty();
+		System.out.println("check");
 		return this.userCrud
 			.findById(superapp + ":" + email)
 			.map(entity -> {

@@ -5,8 +5,8 @@ import java.util.Map;
 
 import demo.CommandId;
 import demo.ObjectId;
-import demo.UserId;
 import demo.entities.MiniAppCommandEntity;
+import demo.entities.UserId;
 
 public class MiniAppCommandBoundary {
 

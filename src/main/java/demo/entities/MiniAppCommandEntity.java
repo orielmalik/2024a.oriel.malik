@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import demo.CommandId;
 import demo.ObjectId;
-import demo.UserId;
 @Document(collection = "Comannd")
 
 public class MiniAppCommandEntity {

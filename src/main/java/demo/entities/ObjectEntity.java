@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "super_app_object")
+@Document(collection = "SuperAppObject")
 public class ObjectEntity {
 	@Id
 	private String objectId;
@@ -55,7 +55,7 @@ public class ObjectEntity {
 		this.alias = alias;
 	}
 
-	public boolean isActive() {
+	public boolean getActive() {
 		return active;
 	}
 

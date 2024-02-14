@@ -21,11 +21,17 @@ public class ObjectBoundary {
 	}
 
 	public ObjectBoundary(ObjectEntity entity) {
-
+		this.setObjectId(new ObjectId(entity.getSuperApp(), entity.getObjectId()));
+		this.setType(entity.getType());
+		this.setAlias(entity.getAlias());
+		this.setActive(entity.getActive());
+		this.setCreatedTimestamp(entity.getCreatedTimestamp());
+		this.setCreatedBy(new CreatedBy(entity.getUserIdSuperapp(), entity.getUserIdEmail()));
+		this.setObjectDetails(entity.getObjectDetails());
 	}
 
-	public ObjectBoundary(String type, String alias, boolean active, Date createdTimestamp,
-			CreatedBy createdBy, Map<String, Object> objectDetails) {
+	public ObjectBoundary(String type, String alias, boolean active, Date createdTimestamp, CreatedBy createdBy,
+			Map<String, Object> objectDetails) {
 		super();
 		this.type = type;
 		this.alias = alias;
