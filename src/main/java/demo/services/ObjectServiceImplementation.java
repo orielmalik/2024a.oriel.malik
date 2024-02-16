@@ -68,4 +68,23 @@ public class ObjectServiceImplementation implements ObjectService {
 		}).flatMap(this.objectCrud::save).map(ObjectBoundary::new).log().then();
 	}
 
+	@Override
+	public Flux<ObjectBoundary> searchbyType(String type) {
+		// TODO Auto-generated method stub
+		return objectCrud.findByType(type)
+				.map(ObjectBoundary::new).log();
+	}
+
+	@Override
+	public Flux<ObjectBoundary> searchbyAlias(String alias) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Flux<ObjectBoundary> searchbyAliasPattern() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -44,5 +44,6 @@ public class ObjectController {
 	public Mono<Void> updateObject(@PathVariable("id") String id, @RequestBody ObjectBoundary update) {
 		return this.objectService.updateObject(id, update);
 	}
+	
 
 }
