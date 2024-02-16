@@ -73,5 +73,4 @@ public class ObjectServiceImplementation implements ObjectService {
 			return entity;
 		}).flatMap(this.objectCrud::save).map(ObjectBoundary::new).log().then();
 	}
-
 }
