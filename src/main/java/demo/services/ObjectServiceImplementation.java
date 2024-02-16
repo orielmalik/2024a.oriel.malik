@@ -3,11 +3,15 @@ package demo.services;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.swing.Spring;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.web.ProjectedPayload;
 import org.springframework.stereotype.Service;
 
 import demo.ObjectId;
 import demo.boundries.ObjectBoundary;
+import demo.exception.BadRequest400;
 import demo.interfaces.ObjectCrud;
 import demo.interfaces.ObjectService;
 import reactor.core.publisher.Flux;
@@ -31,34 +35,36 @@ public class ObjectServiceImplementation implements ObjectService {
 		if (object.getObjectId() == null) {
 			object.setObjectId(new ObjectId());
 		}
-		object.getObjectId()
-			.setId(UUID.randomUUID().toString())
-			.setSuperapp(superAppName);
+		object.getObjectId().setId(UUID.randomUUID().toString()).setSuperapp(superAppName);
 		object.setCreatedTimestamp(new Date());
 		object.getCreatedBy().getUserId().setSuperapp(superAppName);
-		
+
 		return Mono.just(object).flatMap(boundary -> {
 			if (boundary.getType() == null || boundary.getObjectDetails() == null || boundary.getCreatedBy() == null
 					|| boundary.getCreatedBy().getUserId() == null
 					|| boundary.getCreatedBy().getUserId().getEmail() == null)
-				return Mono.empty(); // TODO throw exception
+				return Mono.error(() -> new BadRequest400("message attribute must not be null"));
 			return Mono.just(boundary);
 		}).map(ObjectBoundary::toEntity).flatMap(this.objectCrud::save).map(entity -> new ObjectBoundary(entity)).log();
 	}
 
 	@Override
-	public Mono<ObjectBoundary> getObject(String id) {
-
-		return this.objectCrud.findById(id).switchIfEmpty(Mono.empty()).map(entity -> new ObjectBoundary(entity)).log();
+	public Mono<ObjectBoundary> getObject(String id, String userSuperapp, String userEmail) {
+		if (userSuperapp == "")
+			return this.objectCrud.findById(id).switchIfEmpty(Mono.empty()).map(entity -> new ObjectBoundary(entity))
+					.log();
+		return Mono.empty(); // //exception
 	}
 
 	@Override
-	public Flux<ObjectBoundary> getAllObjects() {
-		return this.objectCrud.findAll().map(entity -> new ObjectBoundary(entity)).log();
+	public Flux<ObjectBoundary> getAllObjects(String userSuperapp, String userEmail) {
+		if (userSuperapp.equals("2024a.otiel.malik"))
+			return this.objectCrud.findAll().map(entity -> new ObjectBoundary(entity)).log();
+		return Flux.empty(); //exception
 	}
 
 	@Override
-	public Mono<Void> updateObject(String id, ObjectBoundary update) {
+	public Mono<Void> updateObject(String id, ObjectBoundary update, String userSuperapp, String userEmail) {
 		return this.objectCrud.findById(id).map(entity -> {
 			entity.setActive(update.getActive());
 			entity.setType(update.getType());

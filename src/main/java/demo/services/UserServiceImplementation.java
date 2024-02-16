@@ -29,7 +29,6 @@ public class UserServiceImplementation implements UserService{
 		UserBoundary ub = new UserBoundary();
 		UserId id = new UserId(suparappName, user.getEmail());
 		ub.setUserId(id)
-			.setEmail(user.getEmail())
 			.setRole(user.getRole())
 			.setUserName(user.getUserName())
 			.setAvatar(user.getAvatar());
