@@ -15,6 +15,6 @@ public interface ObjectService {
 	public Mono<Void> updateObject(String id, ObjectBoundary update);
 	public Flux<ObjectBoundary> searchbyType(String type);
 	public Flux<ObjectBoundary> searchbyAlias(String alias);
-	public Flux<ObjectBoundary> searchbyAliasPattern();
+	public Flux<ObjectBoundary> searchbyAliasPattern(String pattern);
 
 }

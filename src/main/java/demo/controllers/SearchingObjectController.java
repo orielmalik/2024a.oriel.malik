@@ -44,6 +44,15 @@ import reactor.core.publisher.Mono;
                 @RequestParam(name="email",required = false,defaultValue = "true") String userEmail)
 				{
 			return objectService.searchbyAlias(alias);
-			
+		}
+		
+		@GetMapping(path= {"/byAliasPattern/{pattern}"},
+				produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
+		
+		public Flux<ObjectBoundary> searchbyAliasPattern(@RequestParam(name="pattern",required=false) String pattern,
+				@RequestParam(name="superapp",required = false,defaultValue = "2024.otiel.malik") String userSuperapp,
+                @RequestParam(name="email",required = false,defaultValue = "true") String userEmail)
+				{
+			return objectService.searchbyAliasPattern(pattern);
 		}
 }

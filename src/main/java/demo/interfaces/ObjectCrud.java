@@ -10,4 +10,6 @@ public interface ObjectCrud extends ReactiveMongoRepository<ObjectEntity, String
 	//sprint 3
 public Flux<ObjectEntity>findByType(@Param ("type") String type);
 public Flux<ObjectEntity>findByAlias(@Param ("alias") String alias);
+public Flux<ObjectEntity> findAllByAliasLike(
+		@Param("pattern") String pattern);
 }

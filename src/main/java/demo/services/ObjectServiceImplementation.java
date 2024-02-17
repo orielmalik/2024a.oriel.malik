@@ -82,9 +82,10 @@ public class ObjectServiceImplementation implements ObjectService {
 	}
 
 	@Override
-	public Flux<ObjectBoundary> searchbyAliasPattern() {
+	public Flux<ObjectBoundary> searchbyAliasPattern(String pattern) {
 		// TODO Auto-generated method stub
-		return null;
+		 		return objectCrud.findAllByAliasLike("*" + pattern + "*").map(ObjectBoundary::new).log();
+
 	}
 
 }
