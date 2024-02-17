@@ -78,7 +78,7 @@ public class ObjectServiceImplementation implements ObjectService {
 	@Override
 	public Flux<ObjectBoundary> searchbyAlias(String alias) {
 		// TODO Auto-generated method stub
-		return null;
+		return objectCrud.findByAlias(alias).map(ObjectBoundary::new).log();
 	}
 
 	@Override

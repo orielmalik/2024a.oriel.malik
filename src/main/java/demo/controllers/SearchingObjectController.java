@@ -36,4 +36,14 @@ import reactor.core.publisher.Mono;
 					return objectService.searchbyType(type);
  
                 }
+		@GetMapping(path= {"/byAlias/{alias}"},
+				produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
+		
+		public Flux<ObjectBoundary> searchbyAlias(@RequestParam(name="alias",required=false,defaultValue="mc") String alias,
+				@RequestParam(name="superapp",required = false,defaultValue = "2024.otiel.malik") String userSuperapp,
+                @RequestParam(name="email",required = false,defaultValue = "true") String userEmail)
+				{
+			return objectService.searchbyAlias(alias);
+			
+		}
 }
