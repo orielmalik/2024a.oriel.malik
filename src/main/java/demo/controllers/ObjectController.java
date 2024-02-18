@@ -26,34 +26,27 @@ public class ObjectController {
 		this.objectService = objectService;
 	}
 
-	@PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE },
-								consumes = {MediaType.APPLICATION_JSON_VALUE })
-	public Mono<ObjectBoundary> create(
-			@RequestBody ObjectBoundary message) {
+	@PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	public Mono<ObjectBoundary> create(@RequestBody ObjectBoundary message) {
 		return this.objectService.create(message);
 	}
 
-	@GetMapping(path = { "/{superapp}/{id}" }, produces = {
-			MediaType.APPLICATION_JSON_VALUE })
-	public Mono<ObjectBoundary> getObject(
-			@PathVariable("id") String id,
+	@GetMapping(path = { "/{superapp}/{id}" }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public Mono<ObjectBoundary> getObject(@PathVariable("id") String id,
 			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
 			@RequestParam(name = "userEmail", required = false) String userEmail) {
 		return this.objectService.getObject(id, userSuperapp, userEmail);
 	}
 
-	@GetMapping(produces = {MediaType.TEXT_EVENT_STREAM_VALUE })
+	@GetMapping(produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
 	public Flux<ObjectBoundary> getAllObjects(
 			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
 			@RequestParam(name = "userEmail", required = false) String userEmail) {
 		return this.objectService.getAllObjects(userSuperapp, userEmail);
 	}
 
-	@PutMapping(path = { "/{superapp}/{id}" }, consumes = {
-			MediaType.APPLICATION_JSON_VALUE })
-	public Mono<Void> updateObject(
-			@PathVariable("id") String id,
-			@RequestBody ObjectBoundary update,
+	@PutMapping(path = { "/{superapp}/{id}" }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	public Mono<Void> updateObject(@PathVariable("id") String id, @RequestBody ObjectBoundary update,
 			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
 			@RequestParam(name = "userEmail", required = false) String userEmail) {
 		return this.objectService.updateObject(id, update, userSuperapp, userEmail);
