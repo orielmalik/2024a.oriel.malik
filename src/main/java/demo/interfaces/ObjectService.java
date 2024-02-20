@@ -8,13 +8,15 @@ public interface ObjectService {
 
 	public Mono<ObjectBoundary> create(ObjectBoundary object);
 
-	public Mono<ObjectBoundary> getObject(String id);
+	public Mono<ObjectBoundary> getObject(String id, String userSuperapp, String userEmail);
 
-	public Flux<ObjectBoundary> getAllObjects();
+	public Flux<ObjectBoundary> getAllObjects(String userSuperapp, String userEmail);
 
-	public Mono<Void> updateObject(String id, ObjectBoundary update);
-	public Flux<ObjectBoundary> searchbyType(String type);
-	public Flux<ObjectBoundary> searchbyAlias(String alias);
-	public Flux<ObjectBoundary> searchbyAliasPattern(String pattern);
-
+	public Mono<Void> updateObject(String id, ObjectBoundary update, String userSuperapp, String userEmail);
+	
+	public Flux<ObjectBoundary> searchbyType(String type, String superApp, String userEmail);
+	
+	public Flux<ObjectBoundary> searchbyAlias(String alias, String superApp, String userEmail);
+	
+	public Flux<ObjectBoundary> searchbyAliasPattern(String pattern, String superApp, String userEmail);
 }

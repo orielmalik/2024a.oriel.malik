@@ -30,29 +30,29 @@ import reactor.core.publisher.Mono;
 		produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
 
 		public Flux<ObjectBoundary> searchbyType( @RequestParam(name="type",required = false,defaultValue = "maayan")  String type,
-                @RequestParam(name="superapp",required = false,defaultValue = "2024.otiel.malik") String userSuperapp,
-                @RequestParam(name="email",required = false,defaultValue = "true") String userEmail) {
+                @RequestParam(name="superapp",required = true,defaultValue = "2024a.otiel.malik") String userSuperapp,
+                @RequestParam(name="email",required = true,defaultValue = "true") String userEmail) {
 			
-					return objectService.searchbyType(type);
+					return objectService.searchbyType(type,userSuperapp, userEmail);
  
                 }
 		@GetMapping(path= {"/byAlias/{alias}"},
 				produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
 		
 		public Flux<ObjectBoundary> searchbyAlias(@RequestParam(name="alias",required=false,defaultValue="mc") String alias,
-				@RequestParam(name="superapp",required = false,defaultValue = "2024.otiel.malik") String userSuperapp,
-                @RequestParam(name="email",required = false,defaultValue = "true") String userEmail)
+				@RequestParam(name="superapp",required = true,defaultValue = "2024.otiel.malik") String userSuperapp,
+                @RequestParam(name="email",required = true,defaultValue = "true") String userEmail)
 				{
-			return objectService.searchbyAlias(alias);
+			return objectService.searchbyAlias(alias,userSuperapp, userEmail);
 		}
 		
 		@GetMapping(path= {"/byAliasPattern/{pattern}"},
 				produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
 		
 		public Flux<ObjectBoundary> searchbyAliasPattern(@RequestParam(name="pattern",required=false) String pattern,
-				@RequestParam(name="superapp",required = false,defaultValue = "2024.otiel.malik") String userSuperapp,
-                @RequestParam(name="email",required = false,defaultValue = "true") String userEmail)
+				@RequestParam(name="superapp",required = true,defaultValue = "2024.otiel.malik") String userSuperapp,
+                @RequestParam(name="email",required = true,defaultValue = "true") String userEmail)
 				{
-			return objectService.searchbyAliasPattern(pattern);
+			return objectService.searchbyAliasPattern(pattern,userSuperapp, userEmail);
 		}
 }

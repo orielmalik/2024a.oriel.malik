@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import demo.boundries.ObjectBoundary;
@@ -31,19 +32,24 @@ public class ObjectController {
 	}
 
 	@GetMapping(path = { "/{superapp}/{id}" }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public Mono<ObjectBoundary> getObject(@PathVariable("id") String id) {
-		return this.objectService.getObject(id);
+	public Mono<ObjectBoundary> getObject(@PathVariable("id") String id,
+			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
+			@RequestParam(name = "userEmail", required = false) String userEmail) {
+		return this.objectService.getObject(id, userSuperapp, userEmail);
 	}
 
 	@GetMapping(produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
-	public Flux<ObjectBoundary> getAllObjects() {
-		return this.objectService.getAllObjects();
+	public Flux<ObjectBoundary> getAllObjects(
+			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
+			@RequestParam(name = "userEmail", required = false) String userEmail) {
+		return this.objectService.getAllObjects(userSuperapp, userEmail);
 	}
 
 	@PutMapping(path = { "/{superapp}/{id}" }, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public Mono<Void> updateObject(@PathVariable("id") String id, @RequestBody ObjectBoundary update) {
-		return this.objectService.updateObject(id, update);
+	public Mono<Void> updateObject(@PathVariable("id") String id, @RequestBody ObjectBoundary update,
+			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
+			@RequestParam(name = "userEmail", required = false) String userEmail) {
+		return this.objectService.updateObject(id, update, userSuperapp, userEmail);
 	}
-	
 
 }

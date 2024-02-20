@@ -37,7 +37,7 @@ public class ObjectBoundary {
 
 	public ObjectBoundary(String type, String alias, boolean active, Date createdTimestamp, CreatedBy createdBy,
 			Map<String, Object> objectDetails) {
-		super();
+	super();
 		this.type = type;
 		this.alias = alias;
 		this.active = active;
