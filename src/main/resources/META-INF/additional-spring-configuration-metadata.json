@@ -1,5 +1,12 @@
-{"properties": [{
-  "name": "afeka.demo.message",
-  "type": "java.lang.String",
-  "description": "Sample configuration value for application to read on initialization"
-}]}
+{"properties": [
+  {
+    "name": "afeka.demo.message",
+    "type": "java.lang.String",
+    "description": "Sample configuration value for application to read on initialization"
+  },
+  {
+    "name": "helper.delimiter",
+    "type": "java.lang.String",
+    "description": "delimiter for enitite's id concatantion"
+  }
+]}

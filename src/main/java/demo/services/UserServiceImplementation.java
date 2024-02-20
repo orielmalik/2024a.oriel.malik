@@ -18,6 +18,9 @@ public class UserServiceImplementation implements UserService{
 	@Value("${spring.application.name}")
     private String suparappName;
 	
+	@Value("${helper.delimiter}")
+	private String delimiter;
+	
 	
 	public UserServiceImplementation(UserCrud userCrud) {
 		super();
@@ -26,10 +29,10 @@ public class UserServiceImplementation implements UserService{
 	
 	@Override
 	public Mono<UserBoundary> create(NewUserBoundary user) {
+//		return Mono.error(()->new RuntimeException());
+		
 		UserBoundary ub = new UserBoundary();
-		UserId id = new UserId(suparappName, user.getEmail());
-		ub.setUserId(id)
-			.setEmail(user.getEmail())
+		ub.setUserId(new UserId(suparappName, user.getEmail()))
 			.setRole(user.getRole())
 			.setUserName(user.getUserName())
 			.setAvatar(user.getAvatar());
@@ -43,16 +46,15 @@ public class UserServiceImplementation implements UserService{
 	@Override
 	public Mono<UserBoundary> login(String superapp, String email) {
         return this.userCrud
-        	.findById(superapp + ":" + email)
+        	.findById(superapp + delimiter + email)
         	.map(UserBoundary::new)
         	.log();
 	}	
 
 	@Override
 	public Mono<Void> update(String superapp, String email, UserBoundary user) {
-		System.out.println("check");
 		return this.userCrud
-			.findById(superapp + ":" + email)
+			.findById(superapp + delimiter + email)
 			.map(entity -> {
 				entity.setUserName(user.getUserName());
 				entity.setRole(user.getRole());

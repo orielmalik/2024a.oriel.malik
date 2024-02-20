@@ -33,7 +33,7 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 		command.setInvocationTimestamp(new Date());
 		
 		this.commandCrud
-			.save(command.toEntity());
+			.save(command.toEntity()).map(MiniAppCommandBoundary::new).log();
 		return this.commandCrud
 				.findAll()
 				.map(MiniAppCommandBoundary::new)
