@@ -136,21 +136,35 @@ public class ObjectServiceImplementation implements ObjectService {
 	@Override
 	public Flux<ObjectBoundary> searchbyType(String type, String superApp, String userEmail) {
 		
-		return this.userCrud.findById(superApp + ":" + userEmail).flatMapMany(user -> {
-			// check if he has permission to search objects (if his role is SUPERAPP_USER).
-			if( (user.getRole().equals(Role.MINIAPP_USER)&&this.objectCrud.findAllByActiveIsTrue()!=null) ||user.getRole().equals(Role.SUPERAPP_USER))
-			{
-					// TODO add/edit what you want (start from here)
-					return this.objectCrud.findByType(type, superApp, userEmail).map(ObjectBoundary::new).log();
-			}
-				else {
-					return Flux.error(new UnauthorizedAccess401("You dont have permission to get objects."));
-				}
-			
-		}).switchIfEmpty(Flux.error(new NotFound404("User not found"))); // return a NotFound message if the user is not
-		// in the database.
+		 return this.userCrud.findById(superApp + ":" + userEmail).flatMapMany(user -> {
+		        // Check if the user exists
+		        if (user != null) {
+		            // Check if the user is a MINIAPP_USER
+		            if (user.getRole().equals(Role.MINIAPP_USER)) {
+		                // Miniapp users can only search for objects associated with their miniapp
+		                return this.objectCrud.findAllByTypeAndActiveIsTrue(type)
+		                    .map(ObjectBoundary::new)
+		                    .log();
+		            }
+		            // Check if the user is a SUPERAPP_USER
+		            else if (user.getRole().equals(Role.SUPERAPP_USER)) {
+		                // Superapp users can search for all objects
+		                return this.objectCrud.findAllByType(type)
+		                    .map(ObjectBoundary::new)
+		                    .log();
+		            } else {
+		                // Unauthorized access for other roles
+		                return Flux.error(new UnauthorizedAccess401("You don't have permission to get objects."));
+		            }
+		        } else {
+		            // Return a NotFound error if the user is not found
+		            return Flux.error(new NotFound404("User not found"));
+		        }
+		    });
+		}
+
 		
-	}
+	
 	@Override
 	public Flux<ObjectBoundary> searchbyAlias(String alias, String superApp, String userEmail)
 	{	
@@ -190,7 +204,7 @@ public class ObjectServiceImplementation implements ObjectService {
 	            // Check if the user is a MINIAPP_USER
 	            if (user.getRole().equals(Role.MINIAPP_USER)) {
 	                // Miniapp users can only search for objects associated with their miniapp
-	                return this.objectCrud.findAllByActiveIsTrueAndAliasLike(pattern)
+	                return this.objectCrud.findAllByActiveIsTrueAndAliasLike(""+pattern+"")
 	                    .map(ObjectBoundary::new)
 	                    .log();
 	            }
