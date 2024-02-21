@@ -58,7 +58,8 @@ class SearchingObjectTests {
 	        details.put("key", "value");
 	        entity.setObjectDetails(details);
 	        ObjectBoundary boundary = new ObjectBoundary(entity);
-	    
+		this.webClient.post().uri("/users").bodyValue(boundary).retrieve()
+					.bodyToMono(UserBoundary.class).block();
 return boundary;
 	}
 	
@@ -69,7 +70,7 @@ return boundary;
 		ub.setRole(role);
 		ub.setUserName("index"+i);
 		ub.setAvatar("gaya");
-		UserBoundary actualUserStoredInDatabase = this.webClient.post().uri("/users").bodyValue(ub).retrieve()
+		UserBoundary actualUserStoredInDatabase = this.webClient.post().uri("/objects").bodyValue(ub).retrieve()
 				.bodyToMono(UserBoundary.class).block();
 		return actualUserStoredInDatabase;
 	}
@@ -82,38 +83,30 @@ return boundary;
 				createUser("admin@gmail.com", Role.ADMIN) ,
 		};
 		
-		ObjectBoundary [] objects= {
-				InitialObject("gaya","alma",true),InitialObject("haya","bb",false),
-				InitialObject("abab","bkjg",true)
-		};
+		List<ObjectBoundary> objects= new ArrayList<>();
+				objects.add(InitialObject("gaya","alma",true));
+				objects.add(InitialObject("haya","bb",false));
+				objects.add(InitialObject("abab","bkjg",true));
 		
 		
-		List<ObjectBoundary> check=	
-				Flux.just(objects[0],objects[1],objects[2])
-					.flatMap(m->this.webClient
-						.post()
-						.uri("/objects")
-						.bodyValue(m)
-						.retrieve()
-						.bodyToMono(ObjectBoundary.class)) // Flux<MessageBoundary>
-					.collectList() // Mono<List<MessageBoundary>>
-					.block();
 		
 		
+
 		assertThat(
 				  this.webClient
 					.get()
-					.uri("/objects/search/byType/{type}?userSuperapp={superapp}&userEmail={email}",objects[0].getType(),objects[0].getCreatedBy().getUserId().getSuperapp(),objects[0].getType(),objects[0].getCreatedBy().getUserId().getEmail() )
+					.uri("/objects/search/byType/{type}?userSuperapp={superapp}&userEmail={email}",
+				objects.get(0).getCreatedBy().getUserId().getSuperapp(),	objects.get(0).getType(),	objects.get(0).getCreatedBy().getUserId().getEmail() )
 					.retrieve()
 					.bodyToFlux(ObjectBoundary.class)
 					.collectList()
 					.block())
-					
-					.containsAnyOf(objects[0])
-					.usingRecursiveFieldByFieldElementComparator();
+		.usingRecursiveFieldByFieldElementComparator()
+		.containsAnyElementsOf(objects);
+	}
 	}
 	
-}
+
 
 
 
