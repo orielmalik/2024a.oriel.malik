@@ -120,7 +120,6 @@ public class ObjectServiceImplementation implements ObjectService {
 					if (update.getAlias() != null && update.getAlias() != "") {
 						entity.setAlias(update.getAlias());
 					}
-
 					return entity;
 				}).flatMap(this.objectCrud::save).map(ObjectBoundary::new).log().then();
 			}
@@ -129,4 +128,98 @@ public class ObjectServiceImplementation implements ObjectService {
 																			// in the database.
 
 	}
+	
+	
+	@Override
+	public Flux<ObjectBoundary> searchbyType(String type, String superApp, String userEmail) {
+		
+		 return this.userCrud.findById(superApp + ":" + userEmail).flatMapMany(user -> {
+		        // Check if the user exists
+		        if (user != null) {
+		            // Check if the user is a MINIAPP_USER
+		            if (user.getRole().equals(Role.MINIAPP_USER)) {
+		                // Miniapp users can only search for objects associated with their miniapp
+		                return this.objectCrud.findAllByTypeAndActiveIsTrue(type)
+		                    .map(ObjectBoundary::new)
+		                    .log();
+		            }
+		            // Check if the user is a SUPERAPP_USER
+		            else if (user.getRole().equals(Role.SUPERAPP_USER)) {
+		                // Superapp users can search for all objects
+		                return this.objectCrud.findAllByType(type)
+		                    .map(ObjectBoundary::new)
+		                    .log();
+		            } else {
+		                // Unauthorized access for other roles
+		                return Flux.error(new UnauthorizedAccess401("You don't have permission to get objects."));
+		            }
+		        } else {
+		            // Return a NotFound error if the user is not found
+		            return Flux.error(new NotFound404("User not found"));
+		        }
+		    });
+		}
+
+		
+	
+	@Override
+	public Flux<ObjectBoundary> searchbyAlias(String alias, String superApp, String userEmail)
+	{	
+		    return this.userCrud.findById(superApp + ":" + userEmail).flatMapMany(user -> {
+		        // Check if the user exists
+		        if (user != null) {
+		            // Check if the user is a MINIAPP_USER
+		            if (user.getRole().equals(Role.MINIAPP_USER)) {
+		                // Miniapp users can only search for objects associated with their miniapp
+		                return this.objectCrud.findAllByAliasAndActiveIsTrue(alias)
+		                    .map(ObjectBoundary::new)
+		                    .log();
+		            }
+		            // Check if the user is a SUPERAPP_USER
+		            else if (user.getRole().equals(Role.SUPERAPP_USER)) {
+		                // Superapp users can search for all objects
+		                return this.objectCrud.findAllByAlias(alias)
+		                    .map(ObjectBoundary::new)
+		                    .log();
+		            } else {
+		                // Unauthorized access for other roles
+		                return Flux.error(new UnauthorizedAccess401("You don't have permission to get objects."));
+		            }
+		        } else {
+		            // Return a NotFound error if the user is not found
+		            return Flux.error(new NotFound404("User not found"));
+		        }
+		    });
+		}
+
+
+	@Override
+	public Flux<ObjectBoundary> searchbyAliasPattern(String pattern, String superApp, String userEmail) {
+	    return this.userCrud.findById(superApp + ":" + userEmail).flatMapMany(user -> {
+	        // Check if the user exists
+	        if (user != null) {
+	            // Check if the user is a MINIAPP_USER
+	            if (user.getRole().equals(Role.MINIAPP_USER)) {
+	                // Miniapp users can only search for objects associated with their miniapp
+	                return this.objectCrud.findAllByActiveIsTrueAndAliasLike(""+pattern+"")
+	                    .map(ObjectBoundary::new)
+	                    .log();
+	            }
+	            // Check if the user is a SUPERAPP_USER
+	            else if (user.getRole().equals(Role.SUPERAPP_USER)) {
+	                // Superapp users can search for all objects
+	                return this.objectCrud.findAllByActiveIsTrueAndAliasLike(pattern)
+	                    .map(ObjectBoundary::new)
+	                    .log();
+	            } else {
+	                // Unauthorized access for other roles
+	                return Flux.error(new UnauthorizedAccess401("You don't have permission to get objects."));
+	            }
+	        } else {
+	            // Return a NotFound error if the user is not found
+	            return Flux.error(new NotFound404("User not found"));
+	        }
+	    });
+	}
+
 }
