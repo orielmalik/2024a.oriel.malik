@@ -1,11 +1,8 @@
 package demo;
 
-import demo.boundries.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import demo.boundries.NewUserBoundary;
 import demo.boundries.ObjectBoundary;
+import demo.boundries.UserBoundary;
 import demo.entities.ObjectEntity;
-import reactor.core.publisher.Flux;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 class SearchingObjectTests {
