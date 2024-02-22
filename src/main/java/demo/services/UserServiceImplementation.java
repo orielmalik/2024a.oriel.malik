@@ -3,6 +3,7 @@ package demo.services;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import demo.ValidateEmail;
 import demo.boundries.NewUserBoundary;
 import demo.boundries.UserBoundary;
 import demo.entities.UserId;
@@ -34,6 +35,10 @@ public class UserServiceImplementation implements UserService{
 //		return Mono.error(()->new RuntimeException());
 		if (user.getEmail() ==  null || user.getEmail() == "")
 			return Mono.error(() -> new BadRequest400("Email cant be null or empty string"));
+		
+		if (!ValidateEmail.isValidPattern(user.getEmail())) {
+			return Mono.error(() -> new BadRequest400("Email pattern is not valid."));
+		}
 		
 		if (user.getRole() ==  null)
 			return Mono.error(() -> new BadRequest400("Role cant be null"));

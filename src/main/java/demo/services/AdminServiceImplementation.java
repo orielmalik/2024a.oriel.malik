@@ -41,15 +41,13 @@ public class AdminServiceImplementation implements AdminService {
 		if (email == null || email == "")
 			return Mono.error(() -> new BadRequest400("email attribute must not be null or empty"));
 
-		return userCrud.
-				findById(superappName + delimiter + email).flatMap(entity -> {
+		return userCrud.findById(superappName + delimiter + email)
+				.switchIfEmpty(Mono.error(new NotFound404("User not found"))).flatMap(entity -> {
 					if (entity.getRole() == Role.ADMIN)
 						return this.userCrud.deleteAll();
 					else
 						return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to delete users"));
-				})
-				.switchIfEmpty(Mono.error(new NotFound404("User not found")))
-				.log();
+				});
 	}
 
 	@Override
@@ -61,13 +59,13 @@ public class AdminServiceImplementation implements AdminService {
 			return Mono.error(() -> new BadRequest400("email attribute must not be null or empty"));
 
 		return userCrud.findById(superappName + delimiter + email)
-				.flatMap(entity -> {
+				.switchIfEmpty(Mono.error(new NotFound404("User not found"))).flatMap(entity -> {
 					if (entity.getRole() == Role.ADMIN)
-						return this.objectCrud.deleteAll();
+						return this.objectCrud.deleteAll().log();
 					else
-						return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to delete objects"));
-				}).switchIfEmpty(Mono.error(new NotFound404("User not found")))
-				.log();
+						return Mono
+								.error(() -> new UnauthorizedAccess401("You dont have permission to delete objects"));
+				});
 	}
 
 	@Override
@@ -79,13 +77,13 @@ public class AdminServiceImplementation implements AdminService {
 			return Mono.error(() -> new BadRequest400("email attribute must not be null or empty"));
 
 		return userCrud.findById(superappName + delimiter + email)
-				.flatMap(entity -> {
+				.switchIfEmpty(Mono.error(new NotFound404("User not found"))).flatMap(entity -> {
 					if (entity.getRole() == Role.ADMIN)
 						return this.miniAppCommandCrud.deleteAll();
 					else
-						return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to delete commands"));
-				}).switchIfEmpty(Mono.error(new NotFound404("User not found")))
-				.log();
+						return Mono
+								.error(() -> new UnauthorizedAccess401("You dont have permission to delete commands"));
+				});
 	}
 
 	@Override
@@ -97,14 +95,13 @@ public class AdminServiceImplementation implements AdminService {
 			return Flux.error(() -> new BadRequest400("email attribute must not be null or empty"));
 
 		return userCrud.findById(superappName + delimiter + email)
-				.flatMapMany(entity -> {
+				.switchIfEmpty(Mono.error(() -> new NotFound404("Users not found"))).flatMapMany(entity -> {
 					if (entity.getRole() == Role.ADMIN)
 						return this.userCrud.findAll().map(UserBoundary::new);
 					else
-						return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to fetch users data"));
-				})
-				.switchIfEmpty(Mono.error(() -> new NotFound404("Users not found")))
-				.log();
+						return Mono
+								.error(() -> new UnauthorizedAccess401("You dont have permission to fetch users data"));
+				});
 	}
 
 	@Override
@@ -115,15 +112,12 @@ public class AdminServiceImplementation implements AdminService {
 		if (email == null || email == "")
 			return Flux.error(() -> new BadRequest400("email attribute must not be null or empty"));
 
-		return userCrud.findById(superappName + delimiter + email)
-				.flatMapMany(entity -> {
-					if (entity.getRole() == Role.ADMIN)
-						return this.miniAppCommandCrud.findAll().map(MiniAppCommandBoundary::new);
-					else
-						return Mono.error(()->new UnauthorizedAccess401("You dont have permission to fetch commands data"));
-				})
-				.switchIfEmpty(Mono.error(() -> new NotFound404("Commands not found")))
-				.log();
+		return userCrud.findById(superappName + delimiter + email).flatMapMany(entity -> {
+			if (entity.getRole() == Role.ADMIN)
+				return this.miniAppCommandCrud.findAll().map(MiniAppCommandBoundary::new);
+			else
+				return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to fetch commands data"));
+		}).switchIfEmpty(Mono.error(() -> new NotFound404("Commands not found"))).log();
 	}
 
 	@Override
@@ -134,15 +128,12 @@ public class AdminServiceImplementation implements AdminService {
 		if (email == null || email == "")
 			return Flux.error(() -> new BadRequest400("email attribute must not be null or empty"));
 
-		return userCrud.findById(superappName + delimiter + email)
-				.flatMapMany(entity -> {
-					if (entity.getRole() == Role.ADMIN)
-						return this.miniAppCommandCrud.findAllByCommandIdLike("*" + miniAppName + "*")
-								.map(MiniAppCommandBoundary::new);
-					else
-						return Mono.error(()->new UnauthorizedAccess401("You dont have permission to fetch commands data"));
-				})
-				.switchIfEmpty(Mono.error(() -> new NotFound404("Commands not found")))
-				.log();
+		return userCrud.findById(superappName + delimiter + email).flatMapMany(entity -> {
+			if (entity.getRole() == Role.ADMIN)
+				return this.miniAppCommandCrud.findAllByCommandIdLike("*" + miniAppName + "*")
+						.map(MiniAppCommandBoundary::new);
+			else
+				return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to fetch commands data"));
+		}).switchIfEmpty(Mono.error(() -> new NotFound404("Commands not found"))).log();
 	}
 }
