@@ -8,9 +8,9 @@ public interface ObjectService {
 
 	public Mono<ObjectBoundary> create(ObjectBoundary object);
 
-	public Mono<ObjectBoundary> getObject(String id);
+	public Mono<ObjectBoundary> getObject(String id, String userSuperapp, String userEmail);
 
-	public Flux<ObjectBoundary> getAllObjects();
+	public Flux<ObjectBoundary> getAllObjects(String userSuperapp, String userEmail);
 
-	public Mono<Void> updateObject(String id, ObjectBoundary update);
+	public Mono<Void> updateObject(String id, ObjectBoundary update, String userSuperapp, String userEmail);
 }
