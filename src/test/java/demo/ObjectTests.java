@@ -20,7 +20,7 @@ import demo.boundries.UserBoundary;
 import reactor.core.publisher.Flux;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-class ApplicationTests {
+class ObjectTests {
 	private String url;
 	private WebClient webClient;
 
@@ -39,7 +39,7 @@ class ApplicationTests {
 		ub.setRole(role);
 		ub.setUserName(userName);
 		ub.setAvatar(avatar);
-		UserBoundary actualUserStoredInDatabase = this.webClient.post().uri("/users").bodyValue(ub).retrieve()
+		this.webClient.post().uri("/users").bodyValue(ub).retrieve()
 				.bodyToMono(UserBoundary.class).block();
 
 		// THEN the server stores the object in the database
@@ -50,7 +50,7 @@ class ApplicationTests {
 		Map<String, Object> objectDetails = new HashMap<>();
 		objectDetails.put("Product", "flowers");
 		ObjectBoundary ob = new ObjectBoundary(type, alias, active, null, createdBy, objectDetails);
-		ObjectBoundary actualObjectStoredInDatabase = this.webClient.post().uri("/objects").bodyValue(ob).retrieve()
+		this.webClient.post().uri("/objects").bodyValue(ob).retrieve()
 				.bodyToMono(ObjectBoundary.class).block();
 	}
 
@@ -136,39 +136,51 @@ class ApplicationTests {
 	@Test
 	public void testUpdateObject() {
 	    // GIVEN the server is up and an object is available
-	    ObjectBoundary createdObject = new ObjectBoundary();
-	    String objectId = createdObject.getObjectId().getId();
+		CreatedBy createdBy = new CreatedBy("2024a.otiel.malik", "tchjha2@gmail.com");
+		Map<String, Object> objectDetails = new HashMap<>();
+		objectDetails.put("Product", "flowers");
+		ObjectBoundary ob = new ObjectBoundary("sport", "?", true, null, createdBy, objectDetails);
+		ObjectBoundary actualObjectStoredInDatabase = this.webClient.post().uri("/objects").bodyValue(ob).retrieve()
+				.bodyToMono(ObjectBoundary.class).block();
 
 	    // Update the object
 	    ObjectBoundary update = new ObjectBoundary();
-	    update.setType("updatedType");
-	    update.setAlias("updatedAlias");
+	    update.setType("updated sport");
+	    update.setAlias("updated ?");
+	    update.setActive(false);
+	    update.setCreatedTimestamp(null);
+	    update.setCreatedBy(createdBy);
+	    update.setObjectDetails(objectDetails);
 	    // Set other fields as needed for update
 
+	 // WHEN requesting the object by ID
 	    this.webClient.put()
-	            .uri("/objects/{superapp}/{id}?userSuperapp={userSuperapp}&userEmail={email}",
-	                    createdObject.getObjectId().getSuperapp(), objectId,
+	            .uri("/objects/{superapp}/{id}?userSuperapp={userSuperapp}&userEmail={userEmail}",
+	            		actualObjectStoredInDatabase.getObjectId().getSuperapp(), // superapp
+	            		actualObjectStoredInDatabase.getObjectId().getSuperapp() + ":" + actualObjectStoredInDatabase.getObjectId().getId(), // id
 	                    "2024a.otiel.malik",
 	                    "tchjha2@gmail.com")
 	            .bodyValue(update)
 	            .retrieve()
-	            .bodyToMono(Void.class)
+	            .bodyToMono(ObjectBoundary.class)
 	            .block();
 
 	    // Fetch the updated object
 	    ObjectBoundary updatedObject = this.webClient.get()
-	            .uri("/objects/{superapp}/{id}?userSuperapp={userSuperapp}&userEmail={email}",
-	                    createdObject.getObjectId().getSuperapp(), objectId,
-	                    "2024a.otiel.malik",
-	                    "tchjha2@gmail.com")
+	    		.uri("/objects/{superapp}/{id}?userSuperapp={userSuperapp}&userEmail={email}",
+						actualObjectStoredInDatabase.getObjectId().getSuperapp(), // superapp
+						actualObjectStoredInDatabase.getObjectId().getSuperapp() + ":"
+								+ actualObjectStoredInDatabase.getObjectId().getId(), // id
+						"2024a.otiel.malik", "tchjha2@gmail.com")
 	            .retrieve()
 	            .bodyToMono(ObjectBoundary.class)
 	            .block();
 
 	    // THEN the object should be updated
 	    assertThat(updatedObject).isNotNull();
-	    assertThat(updatedObject.getType()).isEqualTo("updatedType");
-	    assertThat(updatedObject.getAlias()).isEqualTo("updatedAlias");
+	    assertThat(updatedObject.getType()).isEqualTo("updated sport");
+	    assertThat(updatedObject.getAlias()).isEqualTo("updated ?");
+	    assertThat(updatedObject.getActive()).isFalse();
 	    // Add more assertions as needed
 	}
 

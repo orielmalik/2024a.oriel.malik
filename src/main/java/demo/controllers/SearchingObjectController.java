@@ -10,45 +10,41 @@ import demo.boundries.ObjectBoundary;
 import demo.interfaces.ObjectService;
 import reactor.core.publisher.Flux;
 
-	@RestController
-	@RequestMapping(path = { "/superapp/objects/search" })
-	public class SearchingObjectController {
+@RestController
+@RequestMapping(path = { "/superapp/objects/search" })
+public class SearchingObjectController {
 
-		private ObjectService objectService;
+	private ObjectService objectService;
 
-		public SearchingObjectController(ObjectService objectService) {
-			super();
-			this.objectService = objectService;
-		}	
-		
-		
-		@GetMapping(path={"/byType/{type}"},
-		produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
+	public SearchingObjectController(ObjectService objectService) {
+		super();
+		this.objectService = objectService;
+	}
 
-		public Flux<ObjectBoundary> searchbyType( @RequestParam(name="type",required = false)  String type,
-                @RequestParam(name="superapp",required = true) String userSuperapp,
-                @RequestParam(name="email",required = true) String userEmail) {
-			
-					return objectService.searchbyType(type,userSuperapp, userEmail);
- 
-                }
-		@GetMapping(path= {"/byAlias/{alias}"},
-				produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
-		
-		public Flux<ObjectBoundary> searchbyAlias(@RequestParam(name="alias",required=false) String alias,
-				@RequestParam(name="superapp",required = true) String userSuperapp,
-                @RequestParam(name="email",required = true) String userEmail)
-				{
-			return objectService.searchbyAlias(alias,userSuperapp, userEmail);
-		}
-		
-		@GetMapping(path= {"/byAliasPattern/{pattern}"},
-				produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
-		
-		public Flux<ObjectBoundary> searchbyAliasPattern(@RequestParam(name="pattern",required=false) String pattern,
-				@RequestParam(name="superapp",required = true) String userSuperapp,
-                @RequestParam(name="email",required = true) String userEmail)
-				{
-			return objectService.searchbyAliasPattern(pattern,userSuperapp, userEmail);
-		}
+	@GetMapping(path = { "/byType/{type}" }, produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
+
+	public Flux<ObjectBoundary> searchbyType(@RequestParam(name = "type", required = true) String type,
+			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
+			@RequestParam(name = "userEmail", required = false) String userEmail) {
+
+		return objectService.searchbyType(type, userSuperapp, userEmail);
+
+	}
+
+	@GetMapping(path = { "/byAlias/{alias}" }, produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
+
+	public Flux<ObjectBoundary> searchbyAlias(@RequestParam(name = "alias", required = true) String alias,
+			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
+			@RequestParam(name = "userEmail", required = false) String userEmail) {
+		return objectService.searchbyAlias(alias, userSuperapp, userEmail);
+	}
+
+	@GetMapping(path = { "/byAliasPattern/{pattern}" }, produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
+
+	public Flux<ObjectBoundary> searchbyAliasPattern(@RequestParam(name = "pattern", required = true) String pattern,
+			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
+			@RequestParam(name = "userEmail", required = false) String userEmail) {
+		return objectService.searchbyAliasPattern(pattern, userSuperapp, userEmail);
+	}
+
 }
