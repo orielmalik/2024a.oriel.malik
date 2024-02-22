@@ -48,6 +48,7 @@ public class AdminServiceImplementation implements AdminService {
 					else
 						return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to delete users"));
 				})
+				.switchIfEmpty(Mono.error(new NotFound404("User not found")))
 				.log();
 	}
 
@@ -65,7 +66,8 @@ public class AdminServiceImplementation implements AdminService {
 						return this.objectCrud.deleteAll();
 					else
 						return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to delete objects"));
-				}).log();
+				}).switchIfEmpty(Mono.error(new NotFound404("User not found")))
+				.log();
 	}
 
 	@Override
@@ -82,7 +84,8 @@ public class AdminServiceImplementation implements AdminService {
 						return this.miniAppCommandCrud.deleteAll();
 					else
 						return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to delete commands"));
-				}).log();
+				}).switchIfEmpty(Mono.error(new NotFound404("User not found")))
+				.log();
 	}
 
 	@Override

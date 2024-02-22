@@ -121,10 +121,10 @@ public class ObjectServiceImplementation implements ObjectService {
 						entity.setAlias(update.getAlias());
 					}
 					return entity;
-				}).flatMap(this.objectCrud::save).map(ObjectBoundary::new).log().then();
+				}).flatMap(this.objectCrud::save).map(ObjectBoundary::new).log();
 			}
 
-		}).switchIfEmpty(Mono.error(new NotFound404("User not found"))); // return a NotFound message if the user is not
+		}).switchIfEmpty(Mono.error(new NotFound404("User not found"))).then(); // return a NotFound message if the user is not
 																			// in the database.
 
 	}

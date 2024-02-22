@@ -31,7 +31,7 @@ class ApplicationTests {
 	public void setup() {
 		this.url = "http://localhost:8085/superapp";
 		this.webClient = WebClient.create(this.url);
-		createUser("tchjha1@gmail.com", Role.ADMIN, "avichai98", "AS");
+		createUser("tchjha3@gmail.com", Role.ADMIN, "avichai98", "AS");
 		createUser("tchjha2@gmail.com", Role.SUPERAPP_USER, "avichai98", "AS");
 		createUser("Avichai.Shchori@s.afeka.ac.il", Role.MINIAPP_USER, "avichai98", "AS");
 	}
@@ -60,9 +60,11 @@ class ApplicationTests {
 	@AfterEach
 	public void cleanup() {
 		//delete all objects
+		createUser("tchjha1@gmail.com", Role.ADMIN, "avichai98", "AS");
 	this.webClient
 		.delete()
-		.uri("/admin/objects")
+		.uri("/admin/objects?userSuperapp={userSuperapp}&userEmail={userEmail}",
+		"2024a.otiel.malik", "tchjha1@gmail.com")
 		.retrieve()
 		.bodyToMono(Void.class)
 			.block();
@@ -70,7 +72,8 @@ class ApplicationTests {
 	  //delete all users
 	this.webClient
 	.delete()
-	.uri("/admin/users")
+	.uri("/admin/users?userSuperapp={userSuperapp}&userEmail={userEmail}",
+			"2024a.otiel.malik", "tchjha1@gmail.com")
 	.retrieve()
 	.bodyToMono(Void.class)
 		.block();
