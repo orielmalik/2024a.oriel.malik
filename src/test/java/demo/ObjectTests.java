@@ -9,6 +9,7 @@ import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.convert.Delimiter;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
@@ -101,8 +102,7 @@ class ObjectTests {
 		assertThat(this.webClient.get()
 				.uri("/objects/{superapp}/{id}?userSuperapp={userSuperapp}&userEmail={email}",
 						actualObjectStoredInDatabase.getObjectId().getSuperapp(), // superapp
-						actualObjectStoredInDatabase.getObjectId().getSuperapp() + ":"
-								+ actualObjectStoredInDatabase.getObjectId().getId(), // id
+						actualObjectStoredInDatabase.getObjectId().getId(), // id
 						"2024a.otiel.malik", "tchjha2@gmail.com")
 				.retrieve().bodyToMono(ObjectBoundary.class).block()).extracting("type", "alias")
 				.containsExactly("sport", "?");
@@ -122,7 +122,7 @@ class ObjectTests {
 	    ObjectBoundary retrievedObject = this.webClient.get()
 	            .uri("/objects/{superapp}/{id}?userSuperapp={userSuperapp}&userEmail={email}",
 	            		actualObjectStoredInDatabase.getObjectId().getSuperapp(), // superapp
-	            		actualObjectStoredInDatabase.getObjectId().getSuperapp() + ":" + actualObjectStoredInDatabase.getObjectId().getId(), // id
+	            		actualObjectStoredInDatabase.getObjectId().getId(), // id
 	                    "2024a.otiel.malik",
 	                    "tchjha2@gmail.com")
 	            .retrieve()
@@ -157,7 +157,7 @@ class ObjectTests {
 	    this.webClient.put()
 	            .uri("/objects/{superapp}/{id}?userSuperapp={userSuperapp}&userEmail={userEmail}",
 	            		actualObjectStoredInDatabase.getObjectId().getSuperapp(), // superapp
-	            		actualObjectStoredInDatabase.getObjectId().getSuperapp() + ":" + actualObjectStoredInDatabase.getObjectId().getId(), // id
+	            		actualObjectStoredInDatabase.getObjectId().getId(), // id
 	                    "2024a.otiel.malik",
 	                    "tchjha2@gmail.com")
 	            .bodyValue(update)
@@ -169,8 +169,7 @@ class ObjectTests {
 	    ObjectBoundary updatedObject = this.webClient.get()
 	    		.uri("/objects/{superapp}/{id}?userSuperapp={userSuperapp}&userEmail={email}",
 						actualObjectStoredInDatabase.getObjectId().getSuperapp(), // superapp
-						actualObjectStoredInDatabase.getObjectId().getSuperapp() + ":"
-								+ actualObjectStoredInDatabase.getObjectId().getId(), // id
+						actualObjectStoredInDatabase.getObjectId().getId(), // id
 						"2024a.otiel.malik", "tchjha2@gmail.com")
 	            .retrieve()
 	            .bodyToMono(ObjectBoundary.class)
