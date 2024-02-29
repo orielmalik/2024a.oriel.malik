@@ -12,7 +12,7 @@ public class ObjectBoundary {
 	private String type;
 	private String alias;
 	private boolean active;
-	private Date createdTimestamp;
+	private Date creationTimestamp;
 	private CreatedBy createdBy;
 	private Map<String, Object> objectDetails;
 
@@ -22,26 +22,24 @@ public class ObjectBoundary {
 
 	public ObjectBoundary(ObjectEntity entity) {
 		String splitedObjectId[] = entity.getObjectId().split(":");
-		
+
 		this.objectId = new ObjectId();
 		if (entity.getObjectId() != null)
 			this.objectId.setSuperapp(splitedObjectId[0]).setId(splitedObjectId[1]);
-		
-		this.setType(entity.getType())
-			.setAlias(entity.getAlias())
-			.setActive(entity.getActive())
-			.setCreatedTimestamp(entity.getCreatedTimestamp())
-			.setCreatedBy(new CreatedBy(entity.getUserIdSuperapp(), entity.getUserIdEmail()))
-			.setObjectDetails(entity.getObjectDetails());
+
+		this.setType(entity.getType()).setAlias(entity.getAlias()).setActive(entity.getActive())
+				.setCreationTimestamp(entity.getCreationTimestamp())
+				.setCreatedBy(new CreatedBy(entity.getUserIdSuperapp(), entity.getUserIdEmail()))
+				.setObjectDetails(entity.getObjectDetails());
 	}
 
 	public ObjectBoundary(String type, String alias, boolean active, Date createdTimestamp, CreatedBy createdBy,
 			Map<String, Object> objectDetails) {
-	super();
+		super();
 		this.type = type;
 		this.alias = alias;
 		this.active = active;
-		this.createdTimestamp = createdTimestamp;
+		this.creationTimestamp = createdTimestamp;
 		this.createdBy = createdBy;
 		this.objectDetails = objectDetails;
 	}
@@ -82,12 +80,12 @@ public class ObjectBoundary {
 		return this;
 	}
 
-	public Date getCreatedTimestamp() {
-		return createdTimestamp;
+	public Date getCreationTimestamp() {
+		return creationTimestamp;
 	}
 
-	public ObjectBoundary setCreatedTimestamp(Date createdTimestamp) {
-		this.createdTimestamp = createdTimestamp;
+	public ObjectBoundary setCreationTimestamp(Date creationTimestamp) {
+		this.creationTimestamp = creationTimestamp;
 		return this;
 	}
 
@@ -111,16 +109,12 @@ public class ObjectBoundary {
 
 	public ObjectEntity toEntity() {
 		ObjectEntity entity = new ObjectEntity();
-		
+
 		entity.setObjectId(this.getObjectId().getSuperapp() + ":" + this.getObjectId().getId())
-			.setSuperApp(this.getObjectId().getSuperapp())
-			.setCreatedTimestamp(this.getCreatedTimestamp())
-			.setType(this.getType())
-			.setActive(this.getActive())
-			.setAlias(this.getAlias())
-			.setObjectDetails(this.getObjectDetails())
-			.setUserIdEmail(this.getCreatedBy().getUserId().getEmail())
-			.setUserIdSuperapp(this.getCreatedBy().getUserId().getSuperapp());
+				.setSuperApp(this.getObjectId().getSuperapp()).setCreationTimestamp(this.getCreationTimestamp())
+				.setType(this.getType()).setActive(this.getActive()).setAlias(this.getAlias())
+				.setObjectDetails(this.getObjectDetails()).setUserIdEmail(this.getCreatedBy().getUserId().getEmail())
+				.setUserIdSuperapp(this.getCreatedBy().getUserId().getSuperapp());
 
 		return entity;
 	}
@@ -128,7 +122,7 @@ public class ObjectBoundary {
 	@Override
 	public String toString() {
 		return "SuperAppObjectBoundary [objectId=" + objectId + ", type=" + type + ", alias=" + alias + ", active="
-				+ active + ", createdTimestamp=" + createdTimestamp + ", createdBy=" + createdBy + ", objectDetails="
+				+ active + ", createdTimestamp=" + creationTimestamp + ", createdBy=" + createdBy + ", objectDetails="
 				+ objectDetails + "]";
 	}
 

@@ -117,7 +117,7 @@ public class AdminServiceImplementation implements AdminService {
 				return this.miniAppCommandCrud.findAll().map(MiniAppCommandBoundary::new);
 			else
 				return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to fetch commands data"));
-		}).switchIfEmpty(Mono.error(() -> new NotFound404("Commands not found"))).log();
+		}).switchIfEmpty(Flux.empty()).log();
 	}
 
 	@Override
@@ -134,6 +134,6 @@ public class AdminServiceImplementation implements AdminService {
 						.map(MiniAppCommandBoundary::new);
 			else
 				return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to fetch commands data"));
-		}).switchIfEmpty(Mono.error(() -> new NotFound404("Commands not found"))).log();
+		}).switchIfEmpty(Flux.empty()).log();
 	}
 }

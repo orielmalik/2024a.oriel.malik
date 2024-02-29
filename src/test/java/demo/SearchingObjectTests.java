@@ -49,7 +49,7 @@ class SearchingObjectTests {
 	        entity.setType(type);
 	        entity.setAlias(alias);
 	        entity.setActive(true);
-	        entity.setCreatedTimestamp(new java.util.Date());
+	        entity.setCreationTimestamp(new java.util.Date());
 	        entity.setUserIdEmail("user"+i+"@email.com");
 	        entity.setUserIdSuperapp("2024a.otiel.malik");
 	        Map<String, Object> details = new HashMap<>();
@@ -66,7 +66,7 @@ return boundary;
 		i++;
 		ub.setEmail(email);
 		ub.setRole(role);
-		ub.setUserName("index"+i);
+		ub.setUsername("index"+i);
 		ub.setAvatar("gaya");
 		UserBoundary actualUserStoredInDatabase = this.webClient.post().uri("/objects").bodyValue(ub).retrieve()
 				.bodyToMono(UserBoundary.class).block();

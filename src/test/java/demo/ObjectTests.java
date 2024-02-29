@@ -37,7 +37,7 @@ class ObjectTests {
 		NewUserBoundary ub = new NewUserBoundary();
 		ub.setEmail(email);
 		ub.setRole(role);
-		ub.setUserName(userName);
+		ub.setUsername(userName);
 		ub.setAvatar(avatar);
 		this.webClient.post().uri("/users").bodyValue(ub).retrieve()
 				.bodyToMono(UserBoundary.class).block();
@@ -148,7 +148,7 @@ class ObjectTests {
 	    update.setType("updated sport");
 	    update.setAlias("updated ?");
 	    update.setActive(false);
-	    update.setCreatedTimestamp(null);
+	    update.setCreationTimestamp(null);
 	    update.setCreatedBy(createdBy);
 	    update.setObjectDetails(objectDetails);
 	    // Set other fields as needed for update

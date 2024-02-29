@@ -2,6 +2,7 @@ package demo.controllers;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,9 +24,9 @@ public class SearchingObjectController {
 
 	@GetMapping(path = { "/byType/{type}" }, produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
 
-	public Flux<ObjectBoundary> searchbyType(@RequestParam(name = "type", required = true) String type,
-			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
-			@RequestParam(name = "userEmail", required = false) String userEmail) {
+	public Flux<ObjectBoundary> searchbyType(@PathVariable(name = "type", required = true) String type,
+			@PathVariable(name = "userSuperapp", required = false) String userSuperapp,
+			@PathVariable(name = "userEmail", required = false) String userEmail) {
 
 		return objectService.searchbyType(type, userSuperapp, userEmail);
 
@@ -33,17 +34,17 @@ public class SearchingObjectController {
 
 	@GetMapping(path = { "/byAlias/{alias}" }, produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
 
-	public Flux<ObjectBoundary> searchbyAlias(@RequestParam(name = "alias", required = true) String alias,
-			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
-			@RequestParam(name = "userEmail", required = false) String userEmail) {
+	public Flux<ObjectBoundary> searchbyAlias(@PathVariable(name = "alias", required = true) String alias,
+			@PathVariable(name = "userSuperapp", required = false) String userSuperapp,
+			@PathVariable(name = "userEmail", required = false) String userEmail) {
 		return objectService.searchbyAlias(alias, userSuperapp, userEmail);
 	}
 
 	@GetMapping(path = { "/byAliasPattern/{pattern}" }, produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
 
-	public Flux<ObjectBoundary> searchbyAliasPattern(@RequestParam(name = "pattern", required = true) String pattern,
-			@RequestParam(name = "userSuperapp", required = false) String userSuperapp,
-			@RequestParam(name = "userEmail", required = false) String userEmail) {
+	public Flux<ObjectBoundary> searchbyAliasPattern(@PathVariable(name = "pattern", required = true) String pattern,
+			@PathVariable(name = "userSuperapp", required = false) String userSuperapp,
+			@PathVariable(name = "userEmail", required = false) String userEmail) {
 		return objectService.searchbyAliasPattern(pattern, userSuperapp, userEmail);
 	}
 

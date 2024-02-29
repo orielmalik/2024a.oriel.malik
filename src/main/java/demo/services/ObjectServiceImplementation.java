@@ -26,6 +26,9 @@ public class ObjectServiceImplementation implements ObjectService {
 
 	@Value("${spring.application.name}")
 	private String superAppName;
+	
+	@Value("${helper.delimiter}")
+	private String delimiter;
 
 	public ObjectServiceImplementation(ObjectCrud objectCrud, UserCrud userCrud) {
 		super();
@@ -39,28 +42,37 @@ public class ObjectServiceImplementation implements ObjectService {
 			object.setObjectId(new ObjectId());
 		}
 		object.getObjectId().setId(UUID.randomUUID().toString()).setSuperapp(superAppName);
-		object.setCreatedTimestamp(new Date());
+		object.setCreationTimestamp(new Date());
 		object.getCreatedBy().getUserId().setSuperapp(superAppName);
-
+		
+		
 		return Mono.just(object).flatMap(boundary -> {
 			if ((boundary.getType() == null || boundary.getType().isEmpty()) || boundary.getObjectDetails() == null
 					|| boundary.getCreatedBy() == null || boundary.getCreatedBy().getUserId() == null
-					|| boundary.getCreatedBy().getUserId().getEmail() == null)
+					|| boundary.getCreatedBy().getUserId().getEmail() == null
+					|| boundary.getAlias() == null || boundary.getAlias().isEmpty())
 				return Mono.error(() -> new BadRequest400("Some needed attribute are null"));
+			
+			this.userCrud.findById(object.getCreatedBy().getUserId().getSuperapp() + delimiter + object.getCreatedBy().getUserId().getEmail()).flatMap(user -> {
+				if(user.getRole() != Role.SUPERAPP_USER) {
+					return Mono.error(() -> new BadRequest400("You dont have permission to create object."));
+				}
+				return Mono.just(boundary);
+			});
 			return Mono.just(boundary);
 		}).map(ObjectBoundary::toEntity).flatMap(this.objectCrud::save).map(entity -> new ObjectBoundary(entity)).log();
 	}
 
 	@Override
-	public Mono<ObjectBoundary> getObject(String id, String userSuperapp, String userEmail) {
+	public Mono<ObjectBoundary> getObject(String objectSuperapp,String id, String userSuperapp, String userEmail) {
 		// find the user with this userSuperapp and userEmail.
-		return this.userCrud.findById(userSuperapp + ":" + userEmail)
+		return this.userCrud.findById(userSuperapp + delimiter + userEmail)
 				.switchIfEmpty(Mono.error(new NotFound404("User not found"))).flatMap(user -> {
 					// check if he has permission to update objects (if his role is SUPERAPP_USER).
 					if (user.getRole().equals(Role.SUPERAPP_USER)) {
 						// return the object if found,
 						// else return a NotFound message.
-						return this.objectCrud.findById(id)
+						return this.objectCrud.findById(objectSuperapp+ delimiter +id)
 								.switchIfEmpty(Mono.error(() -> new NotFound404("Object not found in database.")))
 								.map(entity -> new ObjectBoundary(entity)).log();
 					}
@@ -99,7 +111,7 @@ public class ObjectServiceImplementation implements ObjectService {
 	}
 
 	@Override
-	public Mono<Void> updateObject(String id, ObjectBoundary update, String userSuperapp, String userEmail) {
+	public Mono<Void> updateObject(String objectSuperapp,String id, ObjectBoundary update, String userSuperapp, String userEmail) {
 		// find the user with this userSuperapp and userEmail
 		return this.userCrud.findById(userSuperapp + ":" + userEmail)
 				.switchIfEmpty(Mono.error(new NotFound404("User not found"))).flatMap(user -> {
@@ -109,7 +121,7 @@ public class ObjectServiceImplementation implements ObjectService {
 						return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to udpate."));
 					} else {
 						// update the needed object.
-						return this.objectCrud.findById(id).map(entity -> {
+						return this.objectCrud.findById(objectSuperapp + delimiter +id).map(entity -> {
 							entity.setActive(update.getActive());
 							// check if type is null or empty string.
 							if (update.getType() != null && update.getType() != "") {

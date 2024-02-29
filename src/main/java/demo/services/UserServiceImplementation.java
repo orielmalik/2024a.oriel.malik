@@ -39,17 +39,19 @@ public class UserServiceImplementation implements UserService{
 		if (!ValidateEmail.isValidPattern(user.getEmail())) {
 			return Mono.error(() -> new BadRequest400("Email pattern is not valid."));
 		}
-		
+		if(user.getAvatar() == null || user.getAvatar() == "") {
+			return Mono.error(() -> new BadRequest400("Avatar cant be null or empty string."));
+		}
 		if (user.getRole() ==  null)
 			return Mono.error(() -> new BadRequest400("Role cant be null"));
 
-		if (user.getUserName() ==  null || user.getUserName() == "")
+		if (user.getUsername() ==  null || user.getUsername() == "")
 			return Mono.error(() -> new BadRequest400("Username cant be null or empty string"));
 		
 		UserBoundary ub = new UserBoundary();
 		ub.setUserId(new UserId(suparappName, user.getEmail()))
 			.setRole(user.getRole())
-			.setUserName(user.getUserName())
+			.setUsername(user.getUsername())
 			.setAvatar(user.getAvatar());
 		
 		return this.userCrud
@@ -84,13 +86,13 @@ public class UserServiceImplementation implements UserService{
 		if (user.getRole() ==  null)
 			return Mono.error(() -> new BadRequest400("Role cant be null"));
 		
-		if (user.getUserName() ==  null || user.getUserName() == "")
+		if (user.getUsername() ==  null || user.getUsername() == "")
 			return Mono.error(() -> new BadRequest400("Username cant be null or empty string"));
 		
 		return this.userCrud
 			.findById(superapp + delimiter + email)
 			.map(entity -> {
-				entity.setUserName(user.getUserName());
+				entity.setUsername(user.getUsername());
 				entity.setRole(user.getRole());
 				entity.setAvatar(user.getAvatar());
 				return entity;

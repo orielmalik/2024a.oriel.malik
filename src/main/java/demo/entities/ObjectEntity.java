@@ -14,7 +14,7 @@ public class ObjectEntity {
 	private String type;
 	private String alias;
 	private boolean active;
-	private Date createdTimestamp;
+	private Date creationTimestamp;
 	private String userIdSuperapp;
 	private String userIdEmail;
 	private Map<String, Object> objectDetails;
@@ -68,12 +68,12 @@ public class ObjectEntity {
 		return this;
 	}
 
-	public Date getCreatedTimestamp() {
-		return createdTimestamp;
+	public Date getCreationTimestamp() {
+		return creationTimestamp;
 	}
 
-	public ObjectEntity setCreatedTimestamp(Date createdTimestamp) {
-		this.createdTimestamp = createdTimestamp;
+	public ObjectEntity setCreationTimestamp(Date creationTimestamp) {
+		this.creationTimestamp = creationTimestamp;
 		return this;
 	}
 
@@ -107,7 +107,7 @@ public class ObjectEntity {
 	@Override
 	public String toString() {
 		return "SuperAppObjectEntity [objectId=" + objectId + ", superApp=" + superApp + ", type=" + type + ", alias="
-				+ alias + ", active=" + active + ", createdTimestamp=" + createdTimestamp + ", userIdSuperapp="
+				+ alias + ", active=" + active + ", createdTimestamp=" + creationTimestamp + ", userIdSuperapp="
 				+ userIdSuperapp + ", userIdEmail=" + userIdEmail + ", objectDetails=" + objectDetails + "]";
 	}
 

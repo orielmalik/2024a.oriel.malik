@@ -7,7 +7,7 @@ import demo.entities.UserId;
 public class UserBoundary {
 	private UserId userId;
 	private Role role;
-	private String userName;
+	private String username;
 	private String avatar;
 	
 	public UserBoundary() {
@@ -20,7 +20,7 @@ public class UserBoundary {
 		if (user.getId() != null)
 			this.userId.setSuperapp(splitedUserId[0]).setEmail(splitedUserId[1]);
 		
-		this.setUserName(user.getUserName())
+		this.setUsername(user.getUsername())
 			.setRole(user.getRole())
 			.setAvatar(user.getAvatar());
 	}
@@ -43,12 +43,12 @@ public class UserBoundary {
 		return this;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getUsername() {
+		return username;
 	}
 
-	public UserBoundary setUserName(String userName) {
-		this.userName = userName;
+	public UserBoundary setUsername(String username) {
+		this.username = username;
 		return this;
 	}
 
@@ -65,7 +65,7 @@ public class UserBoundary {
 		UserEntity entity = new UserEntity();
 		
 		entity.setId(this.getUserId().toString())
-			.setUserName(this.getUserName())
+			.setUsername(this.getUsername())
 			.setEmail(this.getUserId().getEmail())
 			.setRole(this.getRole())
 			.setAvatar(this.getAvatar());
