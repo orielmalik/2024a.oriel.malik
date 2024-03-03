@@ -29,7 +29,7 @@ public class MiniAppCommandBoundary {
 		if (entity.getCommandId() != null)
 			this.commandId.setSuperapp(splitedCommandId[0])
 				.setMiniapp(splitedCommandId[1])
-				.setId(splitedCommandId[1]);
+				.setId(splitedCommandId[2]);
 		
 		this.setCommand(entity.getCommand())
 			.setTargetObject(entity.getTargetObject())
@@ -97,7 +97,7 @@ public class MiniAppCommandBoundary {
 		
 		entity.setCommandId(this.getCommandId().getSuperapp() + 
 				":" + this.getCommandId().getMiniapp() +
-				":" + this.getCommandId().getMiniapp())
+				":" + this.getCommandId().getId())
 				.setCommand(this.getCommand())
 				.setTargetObject(this.getTargetObject())
 				.setInvocationTimestamp(this.getInvocationTimestamp())
