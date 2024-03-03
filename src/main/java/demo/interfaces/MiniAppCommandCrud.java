@@ -7,5 +7,6 @@ import reactor.core.publisher.Flux;
 
 public interface MiniAppCommandCrud extends ReactiveMongoRepository<MiniAppCommandEntity, String>{
 	public Flux<MiniAppCommandEntity> findAllByCommandIdLike(String miniAppName);
+
 }
 
