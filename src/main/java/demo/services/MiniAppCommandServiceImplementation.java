@@ -43,63 +43,6 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 		this.objectCrud = objectCrud;
 	}
 
-//	@Override
-//	public Flux<MiniAppCommandBoundary> invoke(MiniAppCommandBoundary command, String miniAppName) {
-//
-//		if (miniAppName.isEmpty()|| command.getCommand() == null || command.getCommand().isEmpty()) {
-//			return Flux.error(new BadRequest400("MINI APP OR COMMAND NAME  IS NULL"));
-//		}
-//		CommandId comma = new CommandId(suparappName, miniAppName, UUID.randomUUID().toString());
-//		command.setCommandId(comma);
-//		
-//		command.setInvocationTimestamp(new Date());
-//		System.err.println(command.toString());
-////		return this.userCrud
-////				.findById(command.getInvokedBy().getUserId().getSuperapp() + ":"
-////						+ command.getInvokedBy().getUserId().getEmail())
-////				.switchIfEmpty(Mono.error(new NotFound404("i dont know this user"))).flatMapMany(user -> {
-////					// Check if the user exists
-////					// Check if the user is a MINIAPP_USER
-////
-////					if (user.getRole().equals(Role.MINIAPP_USER) && user != null) {
-////						String id = command.getTargetObject().getObjectId().getSuperapp() + ":"
-////								+ command.getTargetObject().getObjectId().getId();
-////						 this.objectCrud.findByObjectIdAndActiveIsTrue(id)
-////								.switchIfEmpty(Mono.error(new NotFound404("i dont know this object")));
-////								
-////					}
-////
-////				else {
-////						return Flux.error(new UnauthorizedAccess401("You dont have permission to invoke."));
-////					}
-////				}).map(MiniAppCommandBoundary::toEntity).flatMapMany(this.commandCrud::save).map(entity -> new MiniAppCommandBoundary(entity)).log();
-////		
-////		
-//	return Flux.just(command).flatMapMany(commandBoundary -> {
-//		
-//		return this.userCrud
-//				.findById(command.getInvokedBy().getUserId().getSuperapp() + ":"
-//						+ command.getInvokedBy().getUserId().getEmail()).switchIfEmpty(Mono.error(new NotFound404("i dont know this user")))
-//				.flatMapMany(user -> {
-//							// Check if the user exists
-//							// Check if the user is a MINIAPP_USER
-//
-//							if (user.getRole().equals(Role.MINIAPP_USER) && user != null) {
-//								String targetObjectid = command.getTargetObject().getObjectId().getSuperapp() + ":"
-//										+ command.getTargetObject().getObjectId().getId();
-//								Mono<ObjectBoundary> targetObject = this.objectCrud.findByObjectIdAndActiveIsTrue(id);
-//								if(targetObject == null) {
-//									return Flux.error(new NotFound404("Object not found"))
-//								}
-//							}
-//		return Flux.just(commandBoundary);
-//				});
-//	}).map(MiniAppCommandBoundary::toEntity).flatMap(this.commandCrud::save).map(entity -> new MiniAppCommandBoundary(entity)).log();
-//				
-//	
-//	
-//	}
-
 	@Override
 	public Flux<MiniAppCommandBoundary> invoke(MiniAppCommandBoundary command, String miniAppName) {
 
@@ -111,7 +54,7 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 		command.setCommandId(comma);
 
 		command.setInvocationTimestamp(new Date());
-		//System.err.println(command.toString());
+		// System.err.println(command.toString());
 
 		return Flux.just(command).flatMap(commandBoundary -> {
 
