@@ -1,20 +1,27 @@
 package demo.services;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import demo.ObjectId;
 import demo.Role;
+import demo.boundries.NewUserBoundary;
 import demo.boundries.ObjectBoundary;
+import demo.boundries.UserBoundary;
+import demo.entities.UserId;
 import demo.exception.BadRequest400;
 import demo.exception.UnauthorizedAccess401;
 import demo.exception.NotFound404;
 import demo.interfaces.ObjectCrud;
 import demo.interfaces.ObjectService;
 import demo.interfaces.UserCrud;
+import demo.interfaces.UserService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -26,7 +33,7 @@ public class ObjectServiceImplementation implements ObjectService {
 
 	@Value("${spring.application.name}")
 	private String superAppName;
-	
+
 	@Value("${helper.delimiter}")
 	private String delimiter;
 
@@ -44,27 +51,113 @@ public class ObjectServiceImplementation implements ObjectService {
 		object.getObjectId().setId(UUID.randomUUID().toString()).setSuperapp(superAppName);
 		object.setCreationTimestamp(new Date());
 		object.getCreatedBy().getUserId().setSuperapp(superAppName);
-		
-		
-		return Mono.just(object).flatMap(boundary -> {
-			if ((boundary.getType() == null || boundary.getType().isEmpty()) || boundary.getObjectDetails() == null
-					|| boundary.getCreatedBy() == null || boundary.getCreatedBy().getUserId() == null
-					|| boundary.getCreatedBy().getUserId().getEmail() == null
-					|| boundary.getAlias() == null || boundary.getAlias().isEmpty())
-				return Mono.error(() -> new BadRequest400("Some needed attribute are null"));
+
+		if (object.getType().equals("Dreamer")) {
+			String url = "http://localhost:8085/superapp/users";
+			WebClient webClient = WebClient.create(url);
 			
-			this.userCrud.findById(object.getCreatedBy().getUserId().getSuperapp() + delimiter + object.getCreatedBy().getUserId().getEmail()).flatMap(user -> {
-				if(user.getRole() != Role.SUPERAPP_USER) {
-					return Mono.error(() -> new BadRequest400("You dont have permission to create object."));
-				}
+			//Create new UserBoundary
+			NewUserBoundary nub = new NewUserBoundary();
+			
+			//Get data from objectDetails map
+			String email = object.getCreatedBy().getUserId().getEmail();
+			String username = object.getObjectDetails().containsKey("username") ? (String) object.getObjectDetails().get("username") : null;
+			String avatar = object.getObjectDetails().containsKey("avatar") ? (String) object.getObjectDetails().get("avatar") : null;
+			String location = object.getObjectDetails().containsKey("location") ? (String) object.getObjectDetails().get("location") : null;
+			String birthday = object.getObjectDetails().containsKey("birthday") ? (String) object.getObjectDetails().get("birthday") : null;
+			String gender = object.getObjectDetails().containsKey("gender") ? (String) object.getObjectDetails().get("gender") : null;
+			if (email == null || email == "" || username == null || username == "" ||
+					avatar == null || avatar == "" || location == null || location == "" ||
+					birthday == null || birthday == "" || gender == null || gender == "") {
+				return Mono.error(() -> new BadRequest400("Some needed attribute are null or empty"));
+			}
+			
+			//Set NewUserBoundary
+			nub.setEmail(email);
+			nub.setRole(Role.SUPERAPP_USER);
+			nub.setUsername(username);
+			nub.setAvatar(avatar);
+			
+			//Post using WebClient
+			 webClient.post().bodyValue(nub).retrieve()
+	            .bodyToMono(UserBoundary.class)
+	            .subscribe(
+	                    userBoundary -> {
+	                        // Handle the response here
+	                        System.out.println("User created: " + userBoundary.getUsername());
+	                    },
+	                    throwable -> {
+	                        // Handle errors here
+	                        System.err.println("Error creating user: " + throwable.getMessage());
+	                    }
+	            );
+		}
+		
+		else if(object.getType().equals("Counselor")) {
+			String url = "http://localhost:8085/superapp/users";
+			WebClient webClient = WebClient.create(url);
+			
+			//Create new UserBoundary
+			NewUserBoundary nub = new NewUserBoundary();
+			
+			//Get data from objectDetails map
+			String email = object.getCreatedBy().getUserId().getEmail();
+			String username = object.getObjectDetails().containsKey("username") ? (String) object.getObjectDetails().get("username") : null;
+			String avatar = object.getObjectDetails().containsKey("avatar") ? (String) object.getObjectDetails().get("avatar") : null;
+			String birthday = object.getObjectDetails().containsKey("birthday") ? (String) object.getObjectDetails().get("birthday") : null;
+			String phoneNumber = object.getObjectDetails().containsKey("phoneNumber") ? (String) object.getObjectDetails().get("phoneNumber") : null;
+			Integer experience = object.getObjectDetails().containsKey("experience") ? (Integer) object.getObjectDetails().get("experience") : null;
+			String specialization = object.getObjectDetails().containsKey("specialization") ? (String) object.getObjectDetails().get("specialization") : null;
+			if (email == null || email == "" || username == null || username == "" ||
+					avatar == null || avatar == "" || birthday == null || birthday == "" ||
+					phoneNumber == null || phoneNumber == "" || experience == null ||
+					specialization == null || specialization == "") {
+				return Mono.error(() -> new BadRequest400("Some needed attribute are null or empty"));
+			}
+			
+			//Set NewUserBoundary
+			nub.setEmail(email);
+			nub.setRole(Role.SUPERAPP_USER);
+			nub.setUsername(username);
+			nub.setAvatar(avatar);
+			
+			//Post using WebClient
+			 webClient.post().bodyValue(nub).retrieve()
+	            .bodyToMono(UserBoundary.class)
+	            .subscribe(
+	                    userBoundary -> {
+	                        // Handle the response here
+	                        System.out.println("User created: " + userBoundary.getUsername());
+	                    },
+	                    throwable -> {
+	                        // Handle errors here
+	                        System.err.println("Error creating user: " + throwable.getMessage());
+	                    }
+	            );
+		}
+		
+			return Mono.just(object).flatMap(boundary -> {
+				if ((boundary.getType() == null || boundary.getType().isEmpty()) || boundary.getObjectDetails() == null
+						|| boundary.getCreatedBy() == null || boundary.getCreatedBy().getUserId() == null
+						|| boundary.getCreatedBy().getUserId().getEmail() == null || boundary.getAlias() == null
+						|| boundary.getAlias().isEmpty())
+					return Mono.error(() -> new BadRequest400("Some needed attribute are null"));
+
+				this.userCrud.findById(object.getCreatedBy().getUserId().getSuperapp() + delimiter
+						+ object.getCreatedBy().getUserId().getEmail()).flatMap(user -> {
+							if (user.getRole() != Role.SUPERAPP_USER) {
+								return Mono
+										.error(() -> new BadRequest400("You dont have permission to create object."));
+							}
+							return Mono.just(boundary);
+						});
 				return Mono.just(boundary);
-			});
-			return Mono.just(boundary);
-		}).map(ObjectBoundary::toEntity).flatMap(this.objectCrud::save).map(entity -> new ObjectBoundary(entity)).log();
-	}
+			}).map(ObjectBoundary::toEntity).flatMap(this.objectCrud::save).map(entity -> new ObjectBoundary(entity))
+					.log();
+		}
 
 	@Override
-	public Mono<ObjectBoundary> getObject(String objectSuperapp,String id, String userSuperapp, String userEmail) {
+	public Mono<ObjectBoundary> getObject(String objectSuperapp, String id, String userSuperapp, String userEmail) {
 		// find the user with this userSuperapp and userEmail.
 		return this.userCrud.findById(userSuperapp + delimiter + userEmail)
 				.switchIfEmpty(Mono.error(new NotFound404("User not found"))).flatMap(user -> {
@@ -72,7 +165,7 @@ public class ObjectServiceImplementation implements ObjectService {
 					if (user.getRole().equals(Role.SUPERAPP_USER)) {
 						// return the object if found,
 						// else return a NotFound message.
-						return this.objectCrud.findById(objectSuperapp+ delimiter +id)
+						return this.objectCrud.findById(objectSuperapp + delimiter + id)
 								.switchIfEmpty(Mono.error(() -> new NotFound404("Object not found in database.")))
 								.map(entity -> new ObjectBoundary(entity)).log();
 					}
@@ -111,7 +204,8 @@ public class ObjectServiceImplementation implements ObjectService {
 	}
 
 	@Override
-	public Mono<Void> updateObject(String objectSuperapp,String id, ObjectBoundary update, String userSuperapp, String userEmail) {
+	public Mono<Void> updateObject(String objectSuperapp, String id, ObjectBoundary update, String userSuperapp,
+			String userEmail) {
 		// find the user with this userSuperapp and userEmail
 		return this.userCrud.findById(userSuperapp + ":" + userEmail)
 				.switchIfEmpty(Mono.error(new NotFound404("User not found"))).flatMap(user -> {
@@ -121,7 +215,7 @@ public class ObjectServiceImplementation implements ObjectService {
 						return Mono.error(() -> new UnauthorizedAccess401("You dont have permission to udpate."));
 					} else {
 						// update the needed object.
-						return this.objectCrud.findById(objectSuperapp + delimiter +id).map(entity -> {
+						return this.objectCrud.findById(objectSuperapp + delimiter + id).map(entity -> {
 							entity.setActive(update.getActive());
 							// check if type is null or empty string.
 							if (update.getType() != null && update.getType() != "") {
