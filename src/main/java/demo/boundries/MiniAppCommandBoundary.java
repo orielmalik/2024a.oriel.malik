@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.Map;
 
 import demo.CommandId;
+import demo.InvokedBy;
 import demo.ObjectId;
+import demo.TargetObject;
 import demo.entities.MiniAppCommandEntity;
 import demo.entities.UserId;
 
@@ -12,9 +14,9 @@ public class MiniAppCommandBoundary {
 
 	private CommandId commandId;
 	private String command;
-	private ObjectId targetObject;
+	private TargetObject targetObject;
 	private Date invocationTimestamp;
-	private UserId invokedBy;
+	private InvokedBy invokedBy;
 	private Map<String,Object> commandAttributes;
 	
 	public MiniAppCommandBoundary() {
@@ -27,7 +29,7 @@ public class MiniAppCommandBoundary {
 		if (entity.getCommandId() != null)
 			this.commandId.setSuperapp(splitedCommandId[0])
 				.setMiniapp(splitedCommandId[1])
-				.setId(splitedCommandId[1]);
+				.setId(splitedCommandId[2]);
 		
 		this.setCommand(entity.getCommand())
 			.setTargetObject(entity.getTargetObject())
@@ -54,11 +56,11 @@ public class MiniAppCommandBoundary {
 		return this;
 	}
 
-	public ObjectId getTargetObject() {
+	public TargetObject getTargetObject() {
 		return targetObject;
 	}
 
-	public MiniAppCommandBoundary setTargetObject(ObjectId targetObject) {
+	public MiniAppCommandBoundary setTargetObject(TargetObject targetObject) {
 		this.targetObject = targetObject;
 		return this;
 	}
@@ -72,11 +74,11 @@ public class MiniAppCommandBoundary {
 		return this;
 	}
 
-	public UserId getInvokedBy() {
+	public InvokedBy getInvokedBy() {
 		return invokedBy;
 	}
 
-	public MiniAppCommandBoundary setInvokedBy(UserId invokedBy) {
+	public MiniAppCommandBoundary setInvokedBy(InvokedBy invokedBy) {
 		this.invokedBy = invokedBy;
 		return this;
 	}
@@ -95,7 +97,7 @@ public class MiniAppCommandBoundary {
 		
 		entity.setCommandId(this.getCommandId().getSuperapp() + 
 				":" + this.getCommandId().getMiniapp() +
-				":" + this.getCommandId().getMiniapp())
+				":" + this.getCommandId().getId())
 				.setCommand(this.getCommand())
 				.setTargetObject(this.getTargetObject())
 				.setInvocationTimestamp(this.getInvocationTimestamp())

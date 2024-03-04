@@ -5,15 +5,18 @@ import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import demo.InvokedBy;
 import demo.ObjectId;
+import demo.TargetObject;
 
 @Document(collection = "Commands")
 public class MiniAppCommandEntity {
 	@Id String commandId;
 	private String command;
-	private ObjectId targetObject;
+	private TargetObject targetObject;
 	private Date invocationTimestamp;
-	private UserId invokedBy;
+	private InvokedBy invokedBy;
 	private Map<String,Object> commandAttributes;
 	
 	public MiniAppCommandEntity() {
@@ -37,11 +40,11 @@ public class MiniAppCommandEntity {
 		return this;
 	}
 
-	public ObjectId getTargetObject() {
+	public TargetObject getTargetObject() {
 		return targetObject;
 	}
 
-	public MiniAppCommandEntity setTargetObject(ObjectId targetObject) {
+	public MiniAppCommandEntity setTargetObject(TargetObject targetObject) {
 		this.targetObject = targetObject;
 		return this;
 	}
@@ -55,11 +58,11 @@ public class MiniAppCommandEntity {
 		return this;
 	}
 
-	public UserId getInvokedBy() {
+	public InvokedBy getInvokedBy() {
 		return invokedBy;
 	}
 
-	public MiniAppCommandEntity setInvokedBy(UserId invokedBy) {
+	public MiniAppCommandEntity setInvokedBy(InvokedBy invokedBy) {
 		this.invokedBy = invokedBy;
 		return this;
 	}
