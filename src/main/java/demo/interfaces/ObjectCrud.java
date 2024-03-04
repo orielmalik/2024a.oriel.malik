@@ -14,7 +14,8 @@ public interface ObjectCrud extends ReactiveMongoRepository<ObjectEntity, String
 	public Flux<ObjectEntity> findAllByType(String type); // SUPERAPP_USER
 	public Flux<ObjectEntity> findAllByAlias(@Param ("alias") String alias); // SUPERAPP_USER
 	public Flux<ObjectEntity> findAllByAliasLike(@Param("pattern") String pattern); // SUPERAPP_USER
-	
+	public Flux<ObjectEntity> findfindByAgeGreaterThan(int Age); // MINIAPP_USER
+
 	public Flux<ObjectEntity> findAllByTypeAndActiveIsTrue(String type); // MINIAPP_USER
 	public Flux<ObjectEntity> findAllByAliasAndActiveIsTrue(@Param ("alias") String alias);// MINIAPP_USER
 	public Flux<ObjectEntity> findAllByActiveIsTrueAndAliasLike(

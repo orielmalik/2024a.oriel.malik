@@ -3,10 +3,7 @@ package demo.interfaces;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import demo.entities.MiniAppCommandEntity;
-import demo.services.List;
-import demo.services.Pageable;
-import demo.services.Query;
-import demo.services.SuperAppObjectEntity;
+
 import reactor.core.publisher.Flux;
 
 public interface MiniAppCommandCrud extends ReactiveMongoRepository<MiniAppCommandEntity, String>{
