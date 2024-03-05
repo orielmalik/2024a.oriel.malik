@@ -11,7 +11,6 @@ import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
 import demo.CommandId;
 import demo.Role;
-import demo.SearchByCriteriaCommand;
 import demo.boundries.MiniAppCommandBoundary;
 import demo.boundries.ObjectBoundary;
 import demo.entities.ObjectEntity;
@@ -38,7 +37,6 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 
 	@Value("${helper.delimiter}")
 	private String delimiter;
-private GeneralCommand general;
 	public MiniAppCommandServiceImplementation(MiniAppCommandCrud commandCrud, UserCrud usercrud,
 			ObjectCrud objectCrud) {
 		super();
@@ -102,15 +100,31 @@ private GeneralCommand general;
 		String tar=m.getCommand().substring(0, m.getCommand().indexOf('-'));//format :name of  command from start index to -
 		switch(tar) {
 		case ("search"):
-		SearchByCriteriaCommand c=new SearchByCriteriaCommand(this.objectCrud,m) ;
-		c.execute().subscribe(objectEntity -> {
+
+			SearchByCriteriaCommand searchCommand=new SearchByCriteriaCommand(this.objectCrud,m) ;
+		searchCommand.execute().subscribe(objectEntity -> {
 		    // 
-			m.getCommandAttributes().put("results", 	objectEntity);
+			m.getCommandAttributes().put("results", 	objectEntity.getAlias());//to check results
+			objectEntity.getObjectDetails().put("seen", m.getInvokedBy().getUserId().getEmail());
+			marketObject(this.objectCrud.findById(m.getTargetObject().getObjectId().getId()),objectEntity.getAlias());
+			this.objectCrud.save(objectEntity);
 			System.err.println(objectEntity);
 
 		});
 		break;
+		case ("meet"):
+RequestMeetingCommand  RequestMeetingCommand=new RequestMeetingCommand(this.objectCrud,m);
+	default:
 		
+		System.err.println("bb");
+
 		}
 	}
+	public void marketObject(Mono<ObjectEntity> objectMono,String a) {
+	     objectMono.subscribe(objectEntity -> {
+	    	 objectEntity.getObjectDetails().put("searched", a);
+	   this.objectCrud.save(objectEntity);
+	    });
+	}
+
 }
