@@ -14,92 +14,86 @@ import demo.interfaces.UserService;
 import reactor.core.publisher.Mono;
 
 @Service
-public class UserServiceImplementation implements UserService{
+public class UserServiceImplementation implements UserService {
 
 	private UserCrud userCrud;
-	
+
 	@Value("${spring.application.name}")
-    private String suparappName;
-	
+	private String suparappName;
+
 	@Value("${helper.delimiter}")
 	private String delimiter;
-	
-	
+
 	public UserServiceImplementation(UserCrud userCrud) {
 		super();
 		this.userCrud = userCrud;
 	}
-	
+
 	@Override
 	public Mono<UserBoundary> create(NewUserBoundary user) {
-//		return Mono.error(()->new RuntimeException());
-		if (user.getEmail() ==  null || user.getEmail() == "")
+		if (user.getEmail() == null || user.getEmail() == "")
 			return Mono.error(() -> new BadRequest400("Email cant be null or empty string"));
-		
+
 		if (!ValidateEmail.isValidPattern(user.getEmail())) {
 			return Mono.error(() -> new BadRequest400("Email pattern is not valid."));
 		}
-		if(user.getAvatar() == null || user.getAvatar() == "") {
+
+		if (user.getAvatar() == null || user.getAvatar() == "") {
 			return Mono.error(() -> new BadRequest400("Avatar cant be null or empty string."));
 		}
-		if (user.getRole() ==  null)
+		
+		if (user.getRole() == null)
 			return Mono.error(() -> new BadRequest400("Role cant be null"));
 
-		if (user.getUsername() ==  null || user.getUsername() == "")
+		if (user.getUsername() == null || user.getUsername() == "")
 			return Mono.error(() -> new BadRequest400("Username cant be null or empty string"));
 		
-		UserBoundary ub = new UserBoundary();
-		ub.setUserId(new UserId(suparappName, user.getEmail()))
-			.setRole(user.getRole())
-			.setUsername(user.getUsername())
-			.setAvatar(user.getAvatar());
-		
-		return this.userCrud
-				.save(ub.toEntity())
-				.map(UserBoundary::new)
-				.log();
+		// check if the user's email is already in use.
+		return this.userCrud.existsByEmail(user.getEmail()).flatMap(exists -> {
+			if (exists) { // if used
+				return Mono.error(new BadRequest400("This email is already used.")); // return an error.
+			}
+			else {// else, save the user in the database.
+				UserBoundary ub = new UserBoundary();
+				ub.setUserId(new UserId(suparappName, user.getEmail())).setRole(user.getRole())
+						.setUsername(user.getUsername()).setAvatar(user.getAvatar());
+				return this.userCrud.save(ub.toEntity()).map(UserBoundary::new);
+			}
+		}).log();
+
 	}
 
 	@Override
 	public Mono<UserBoundary> login(String superapp, String email) {
-		if (superapp ==  null || superapp == "")
+		if (superapp == null || superapp == "")
 			return Mono.error(() -> new BadRequest400("Superapp cant be null or empty string"));
-		
-		if (email ==  null || email == "")
+
+		if (email == null || email == "")
 			return Mono.error(() -> new BadRequest400("Email cant be null or empty string"));
-		
-        return this.userCrud
-        	.findById(superapp + delimiter + email)
-        	.map(UserBoundary::new)
-        	.switchIfEmpty(Mono.error(() -> new NotFound404("User not found")))
-        	.log();
-	}	
+
+		return this.userCrud.findById(superapp + delimiter + email).map(UserBoundary::new)
+				.switchIfEmpty(Mono.error(() -> new NotFound404("User not found."))).log();
+	}
 
 	@Override
 	public Mono<Void> update(String superapp, String email, UserBoundary user) {
-		if (superapp ==  null || superapp == "")
+		if (superapp == null || superapp == "")
 			return Mono.error(() -> new BadRequest400("Superapp cant be null or empty string"));
-		
-		if (email ==  null || email == "")
+
+		if (email == null || email == "")
 			return Mono.error(() -> new BadRequest400("Email cant be null or empty string"));
-		
-		if (user.getRole() ==  null)
+
+		if (user.getRole() == null)
 			return Mono.error(() -> new BadRequest400("Role cant be null"));
-		
-		if (user.getUsername() ==  null || user.getUsername() == "")
+
+		if (user.getUsername() == null || user.getUsername() == "")
 			return Mono.error(() -> new BadRequest400("Username cant be null or empty string"));
-		
-		return this.userCrud
-			.findById(superapp + delimiter + email)
-			.map(entity -> {
-				entity.setUsername(user.getUsername());
-				entity.setRole(user.getRole());
-				entity.setAvatar(user.getAvatar());
-				return entity;
-			})
-			.flatMap(this.userCrud::save)
-			.map(UserBoundary::new)
-			.log()
-			.then();
+
+		return this.userCrud.findById(superapp + delimiter + email).map(entity -> {
+			entity.setUsername(user.getUsername());
+			entity.setRole(user.getRole());
+			entity.setAvatar(user.getAvatar());
+			return entity;
+		}).flatMap(this.userCrud::save).map(UserBoundary::new).log().then();
 	}
 }
