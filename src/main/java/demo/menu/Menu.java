@@ -15,7 +15,7 @@ public class Menu {
 	private InvokedBy invoker;//by id specific i find this invokedBy and do i
  private UserCrud usercrud;
 	private MiniAppCommandBoundary m;
-	private GeneralCommand g;
+	private GeneralCommand generalCommand;
 	public Menu(String id)
 	{
 		m=new MiniAppCommandBoundary();
@@ -37,7 +37,7 @@ public class Menu {
 		case("provideproduct"):
 			break;
 		}
-		g.execute(m);
+	//	generalCommand.execute(m);
 	}
 	
 	/*public boolean fillbyId(String id)//true if we succeded login to menu

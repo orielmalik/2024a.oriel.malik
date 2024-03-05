@@ -1,6 +1,8 @@
 package demo.services;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -9,12 +11,14 @@ import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
 import demo.CommandId;
 import demo.Role;
+import demo.SearchByCriteriaCommand;
 import demo.boundries.MiniAppCommandBoundary;
 import demo.boundries.ObjectBoundary;
 import demo.entities.ObjectEntity;
 import demo.exception.BadRequest400;
 import demo.exception.NotFound404;
 import demo.exception.UnauthorizedAccess401;
+import demo.interfaces.GeneralCommand;
 import demo.interfaces.MiniAppCommandCrud;
 import demo.interfaces.MiniAppCommandSevice;
 import demo.interfaces.ObjectCrud;
@@ -34,7 +38,7 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 
 	@Value("${helper.delimiter}")
 	private String delimiter;
-
+private GeneralCommand general;
 	public MiniAppCommandServiceImplementation(MiniAppCommandCrud commandCrud, UserCrud usercrud,
 			ObjectCrud objectCrud) {
 		super();
@@ -73,6 +77,13 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 									.switchIfEmpty(Mono.error(new NotFound404("Object not found")))
 									.flatMapMany(targetObject -> {
 										// return the commandBoundary if the user and target object is valid.
+										/*commandBoundary.setCommand("searchByUserName");
+										Map<String,Object>m=new HashMap<>();
+										m.put("UserName", "gay");
+										SearchByCriteriaCommand c=new SearchByCriteriaCommand(this.objectCrud,commandBoundary) ;*/
+									
+									
+										switchPosition(commandBoundary);
 										return Flux.just(commandBoundary);
 									});
 
@@ -84,5 +95,22 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 		}).map(MiniAppCommandBoundary::toEntity).flatMap(this.commandCrud::save)
 				.map(entity -> new MiniAppCommandBoundary(entity)).log();
 
+	}
+	private void switchPosition(MiniAppCommandBoundary m)
+	{
+		
+		String tar=m.getCommand().substring(0, m.getCommand().indexOf('-'));//format :name of  command from start index to -
+		switch(tar) {
+		case ("search"):
+		SearchByCriteriaCommand c=new SearchByCriteriaCommand(this.objectCrud,m) ;
+		c.execute().subscribe(objectEntity -> {
+		    // 
+			m.getCommandAttributes().put("results", 	objectEntity);
+			System.err.println(objectEntity);
+
+		});
+		break;
+		
+		}
 	}
 }
