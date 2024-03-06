@@ -1,6 +1,9 @@
 package demo.boundries;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import demo.CreatedBy;
@@ -26,13 +29,18 @@ public class ObjectBoundary {
 		this.objectId = new ObjectId();
 		if (entity.getObjectId() != null)
 			this.objectId.setSuperapp(splitedObjectId[0]).setId(splitedObjectId[1]);
-
 		this.setType(entity.getType()).setAlias(entity.getAlias()).setActive(entity.getActive())
 				.setCreationTimestamp(entity.getCreationTimestamp())
 				.setCreatedBy(new CreatedBy(entity.getUserIdSuperapp(), entity.getUserIdEmail()))
 				.setObjectDetails(entity.getObjectDetails());
 	}
 
+	private Map<String,Object> putValuesAtObjectDeatils(ObjectEntity entity)
+	{
+		entity.getObjectDetails().put("gender", entity.getGender());
+		return entity.getObjectDetails();
+		
+	}
 	public ObjectBoundary(String type, String alias, boolean active, Date createdTimestamp, CreatedBy createdBy,
 			Map<String, Object> objectDetails) {
 		super();
@@ -115,7 +123,9 @@ public class ObjectBoundary {
 				.setType(this.getType()).setActive(this.getActive()).setAlias(this.getAlias())
 				.setObjectDetails(this.getObjectDetails()).setUserIdEmail(this.getCreatedBy().getUserId().getEmail())
 				.setUserIdSuperapp(this.getCreatedBy().getUserId().getSuperapp());
-
+//the new attributes for ObjectDeatils
+		entity.setGender((String)this.getObjectDetails().get("gender"));
+	entity.setViews((ArrayList<String>) this.getObjectDetails().get("views"));
 		return entity;
 	}
 

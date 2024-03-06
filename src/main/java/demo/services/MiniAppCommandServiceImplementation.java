@@ -1,7 +1,9 @@
 package demo.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -105,26 +107,38 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 		searchCommand.execute().subscribe(objectEntity -> {
 		    // 
 			m.getCommandAttributes().put("results", 	objectEntity.getAlias());//to check results
-			objectEntity.getObjectDetails().put("seen", m.getInvokedBy().getUserId().getEmail());
-			marketObject(this.objectCrud.findById(m.getTargetObject().getObjectId().getId()),objectEntity.getAlias());
-			this.objectCrud.save(objectEntity);
-			System.err.println(objectEntity);
-
+//update-findById-map
+			
+			try {
+			ArrayList<String>lst= (ArrayList<String>) objectEntity.getObjectDetails().get("views");
+			lst.add(objectEntity.getObjectId()+":"+objectEntity.getAlias());
+			m.getCommandAttributes().put("views", 	lst);//to check results
+			objectEntity.getObjectDetails().put("viewscount ", ((ArrayList<String>) objectEntity.getObjectDetails().get("views")).size());
+			ObjectEntity object=findTargetObject(m);
+			object.getViews().add(objectEntity.getObjectId());
+			this.objectCrud.save(objectEntity);			
+		} catch (NullPointerException e) {
+			System.err.println("Key not found!");
+		    
+		}
+			
 		});
 		break;
 		case ("meet"):
-RequestMeetingCommand  RequestMeetingCommand=new RequestMeetingCommand(this.objectCrud,m);
+RequestMeetingCommand  RequestMeetingCommand=new RequestMeetingCommand(m,this.objectCrud);
 	default:
 		
 		System.err.println("bb");
 
 		}
 	}
-	public void marketObject(Mono<ObjectEntity> objectMono,String a) {
-	     objectMono.subscribe(objectEntity -> {
-	    	 objectEntity.getObjectDetails().put("searched", a);
-	   this.objectCrud.save(objectEntity);
-	    });
+	private ObjectEntity findTargetObject(MiniAppCommandBoundary miniAppCommandBoundary)
+	{
+		String oId =miniAppCommandBoundary.getTargetObject().getObjectId().getSuperapp()+":"+miniAppCommandBoundary.getTargetObject().getObjectId().getId();
+		this.objectCrud.findById(oId).map(object->{
+			return object;
+		});
+		return null;
 	}
 
 }
