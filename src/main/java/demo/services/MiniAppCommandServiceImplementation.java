@@ -39,6 +39,7 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 
 	@Value("${helper.delimiter}")
 	private String delimiter;
+	
 	public MiniAppCommandServiceImplementation(MiniAppCommandCrud commandCrud, UserCrud usercrud,
 			ObjectCrud objectCrud) {
 		super();
@@ -76,12 +77,7 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 							return this.objectCrud.findByObjectIdAndActiveIsTrue(targetObjectid)
 									.switchIfEmpty(Mono.error(new NotFound404("Object not found")))
 									.flatMapMany(targetObject -> {
-										// return the commandBoundary if the user and target object is valid.
-										/*commandBoundary.setCommand("searchByUserName");
-										Map<String,Object>m=new HashMap<>();
-										m.put("UserName", "gay");
-										SearchByCriteriaCommand c=new SearchByCriteriaCommand(this.objectCrud,commandBoundary) ;*/
-									
+							
 									
 										switchPosition(commandBoundary);
 										return Flux.just(commandBoundary);
@@ -98,7 +94,7 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 	}
 	private void switchPosition(MiniAppCommandBoundary m)
 	{
-		
+		//consluer-makeTips
 		String tar=m.getCommand().substring(0, m.getCommand().indexOf('-'));//format :name of  command from start index to -
 		switch(tar) {
 		case ("search"):
@@ -106,32 +102,81 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 			SearchByCriteriaCommand searchCommand=new SearchByCriteriaCommand(this.objectCrud,m) ;
 		searchCommand.execute().subscribe(objectEntity -> {
 		    // 
-			m.getCommandAttributes().put("results", 	objectEntity.getAlias());//to check results
+			/*				ArrayList<String>lst=(	ArrayList<String>)objectEntity.getObjectDetails().get("views");
+		lst.add(m.getTargetObject().getObjectId().getId());
+			objectEntity.getObjectDetails().put("views",lst);
+			m.getCommandAttributes().put("results", 	objectEntity.getObjectDetails());//to check results
+*/
 //update-findById-map
-			
-			try {
-			ArrayList<String>lst= (ArrayList<String>) objectEntity.getObjectDetails().get("views");
-			lst.add(objectEntity.getObjectId()+":"+objectEntity.getAlias());
-			m.getCommandAttributes().put("views", 	lst);//to check results
-			objectEntity.getObjectDetails().put("viewscount ", ((ArrayList<String>) objectEntity.getObjectDetails().get("views")).size());
-			ObjectEntity object=findTargetObject(m);
-			object.getViews().add(objectEntity.getObjectId());
-			this.objectCrud.save(objectEntity);			
-		} catch (NullPointerException e) {
-			System.err.println("Key not found!");
-		    
-		}
+		updateObjectEntinty(objectEntity.getObjectId(),m.getTargetObject().getObjectId().getId(),0);
+		//updateObjectEntinty(m.getTargetObject().getObjectId().getId(),objectEntity.getObjectId(),1);
+
 			
 		});
 		break;
 		case ("meet"):
 RequestMeetingCommand  RequestMeetingCommand=new RequestMeetingCommand(m,this.objectCrud);
+		case ("consluer"):
+
 	default:
 		
 		System.err.println("bb");
 
 		}
 	}
+	private Mono<Void> updateObjectEntinty(String objectEntityID,String TargetObjectID,int mode) {
+		// TODO Auto-generated method stub
+			return this.objectCrud
+				.findById(objectEntityID)
+				.map(entity->{
+					System.err.println(entity);
+
+					try {
+				if(entity.getObjectDetails()!=null)
+				{
+					if((mode==0)) {
+				ArrayList<String>lst=(	ArrayList<String>)entity.getObjectDetails().get("views");
+				lst.add(TargetObjectID);
+				entity.getObjectDetails().put("views",lst);
+					}else {
+						ArrayList<String>lst=(	ArrayList<String>)entity.getObjectDetails().get("seen");
+						lst.add(TargetObjectID);
+						entity.getObjectDetails().put("seen",lst);	
+					}}}
+				catch(NullPointerException n)
+				{
+					System.err.println(n.toString());
+				}
+				
+				
+					return entity;
+					}	)
+				.flatMap(this.objectCrud::save)
+				//.map(entity->new MessageBoundary(entity))
+				.map(ObjectBoundary::new).then();
+	
+		
+	}
+	/*@Override
+	public Mono<Void> updateMessage(
+			String id, MessageBoundary update) {
+		return this.messageCrud
+			.findById(id)
+			.map(entity->{
+				if (update.getMessage() != null) {
+				  entity.setMessage(update.getMessage());
+				}
+				if (update.getImportant() != null) {
+					entity.setImportant(update.getImportant());
+				}
+				return entity;
+			})
+			.flatMap(this.messageCrud::save)
+			//.map(entity->new MessageBoundary(entity))
+			.map(MessageBoundary::new)
+			.log()
+			.then();
+	}*/
 	private ObjectEntity findTargetObject(MiniAppCommandBoundary miniAppCommandBoundary)
 	{
 		String oId =miniAppCommandBoundary.getTargetObject().getObjectId().getSuperapp()+":"+miniAppCommandBoundary.getTargetObject().getObjectId().getId();

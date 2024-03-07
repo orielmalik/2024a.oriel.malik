@@ -25,6 +25,8 @@ public class ObjectEntity {
 	//new attributes for this map
 	private String gender;
 	private long viewscount;
+	private long birthdate;
+
 	private ArrayList<String>views;
 	public ObjectEntity() {
 

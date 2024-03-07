@@ -39,13 +39,11 @@ private MiniAppCommandBoundary miniAppCommandBoundary;
 			return Flux.error(new BadRequest400("UserName field does not exist"));
 		}
 			return this.objectcrud.findAllByActiveIsTrueAndAliasLike(userName);
-			
-/*		case ("search-ByAge"): 
+	
+	/*case ("search-ByAge"): 
 			// TODO format LocalDate and
-			
-			LocalDate d = (LocalDate) miniAppCommandBoundary.getCommandAttributes().get("birthdate");
-			return this.objectcrud.     findAllByBirthdateBeforeOrderByBirthdate(d);*toEyalQuestion*/
-
+					return this.objectcrud.findAll(null)
+*/
 		
 		case ("search-Bygender"):
 			String gender = (String) miniAppCommandBoundary.getCommandAttributes().get("gender");

@@ -29,7 +29,7 @@ public interface ObjectCrud extends ReactiveMongoRepository<ObjectEntity, String
     //Flux<ObjectEntity> findByObjectDeatilsKey(String key);
 
 
-    Flux<ObjectEntity> findAllByBirthdateBeforeOrderByBirthdate(LocalDate birthdate);
+    Flux<ObjectEntity> findAllByOrderByBirthdateAsc();
 
 	public Flux<ObjectEntity> findByGender(String gender);
 	//public Flux<ObjectEntity> findByAgeGreaterThan(int age);

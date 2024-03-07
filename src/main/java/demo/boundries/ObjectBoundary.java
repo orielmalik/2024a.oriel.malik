@@ -124,6 +124,9 @@ public class ObjectBoundary {
 				.setObjectDetails(this.getObjectDetails()).setUserIdEmail(this.getCreatedBy().getUserId().getEmail())
 				.setUserIdSuperapp(this.getCreatedBy().getUserId().getSuperapp());
 //the new attributes for ObjectDeatils
+		this.getObjectDetails().put("gender","None");
+		this.getObjectDetails().put("views",new ArrayList<String>());
+
 		entity.setGender((String)this.getObjectDetails().get("gender"));
 	entity.setViews((ArrayList<String>) this.getObjectDetails().get("views"));
 		return entity;
