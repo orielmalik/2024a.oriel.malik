@@ -1,5 +1,6 @@
 package demo.interfaces;
 
+import demo.boundries.MiniAppCommandBoundary;
 import demo.boundries.ObjectBoundary;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,4 +20,6 @@ public interface ObjectService {
 	public Flux<ObjectBoundary> searchbyAlias(String alias, String superApp, String userEmail);
 	
 	public Flux<ObjectBoundary> searchbyAliasPattern(String pattern, String superApp, String userEmail);
+	
+	public Flux<MiniAppCommandBoundary> execute(MiniAppCommandBoundary input);
 }

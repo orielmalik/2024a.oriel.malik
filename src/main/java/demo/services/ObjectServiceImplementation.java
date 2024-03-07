@@ -5,15 +5,18 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import demo.ObjectId;
 import demo.Role;
+import demo.boundries.MiniAppCommandBoundary;
 import demo.boundries.NewUserBoundary;
 import demo.boundries.ObjectBoundary;
 import demo.exception.BadRequest400;
 import demo.exception.NotFound404;
 import demo.exception.UnauthorizedAccess401;
+import demo.interfaces.CommandExec;
 import demo.interfaces.ObjectCrud;
 import demo.interfaces.ObjectService;
 import demo.interfaces.UserCrud;
@@ -22,11 +25,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class ObjectServiceImplementation implements ObjectService {
+public class ObjectServiceImplementation implements ObjectService, CommandExec {
 
 	private ObjectCrud objectCrud;
 	private UserCrud userCrud;
 	private UserService userService;
+	private ApplicationContext applicationContext;
 
 	@Value("${spring.application.name}")
 	private String superAppName;
@@ -34,11 +38,13 @@ public class ObjectServiceImplementation implements ObjectService {
 	@Value("${helper.delimiter}")
 	private String delimiter;
 
-	public ObjectServiceImplementation(ObjectCrud objectCrud, UserCrud userCrud, UserService userService) {
+	public ObjectServiceImplementation(ObjectCrud objectCrud, UserCrud userCrud, UserService userService,
+			ApplicationContext applicationContext) {
 		super();
 		this.objectCrud = objectCrud;
 		this.userCrud = userCrud;
 		this.userService = userService;
+		this.applicationContext = applicationContext;
 	}
 
 	@Override
@@ -80,22 +86,24 @@ public class ObjectServiceImplementation implements ObjectService {
 			String password = object.getObjectDetails().containsKey("password")
 					? (String) object.getObjectDetails().get("password")
 					: null;
-			
+
 			// Create ArrayList <?>
-			ArrayList <?> offers = new ArrayList<>();
+			ArrayList<?> offers = new ArrayList<>();
 			// Checking if the key "offers" is exist and ArrayList type
-			if(object.getObjectDetails().containsKey("offers") && object.getObjectDetails().get("offers") instanceof ArrayList) {
-					offers = (ArrayList<?>) object.getObjectDetails().get("offers");
-					if (!(offers.get(0) instanceof String)) // Checking the ArrayList type
-						return Mono.error(() -> new BadRequest400("The ArrayList type must to be String"));
+			if (object.getObjectDetails().containsKey("offers")
+					&& object.getObjectDetails().get("offers") instanceof ArrayList) {
+				offers = (ArrayList<?>) object.getObjectDetails().get("offers");
+				if (!(offers.get(0) instanceof String)) // Checking the ArrayList type
+					return Mono.error(() -> new BadRequest400("The ArrayList type must to be String"));
 			}
-			
+
 			else // The key "offers" is not exist or not ArrayList
 				offers = null;
 
-			if (email == null || email.isEmpty() || username == null || username.isEmpty() || avatar == null || avatar.isEmpty()
-					|| location == null || location.isEmpty() || birthdate == null || birthdate.isEmpty() || gender == null
-					|| gender.isEmpty() || password == null || password.isEmpty() || offers == null || offers.isEmpty()) {
+			if (email == null || email.isEmpty() || username == null || username.isEmpty() || avatar == null
+					|| avatar.isEmpty() || location == null || location.isEmpty() || birthdate == null
+					|| birthdate.isEmpty() || gender == null || gender.isEmpty() || password == null
+					|| password.isEmpty() || offers == null || offers.isEmpty()) {
 				return Mono.error(() -> new BadRequest400("Some needed attribute are null or empty"));
 			}
 
@@ -143,9 +151,10 @@ public class ObjectServiceImplementation implements ObjectService {
 			String password = object.getObjectDetails().containsKey("password")
 					? (String) object.getObjectDetails().get("password")
 					: null;
-			if (email == null || email.isEmpty() || username == null || username.isEmpty() || avatar == null || avatar.isEmpty()
-					|| birthdate == null || birthdate.isEmpty() || phoneNumber == null || phoneNumber.isEmpty() || experience == null
-					|| specialization == null || specialization.isEmpty() || password == null || password.isEmpty()) {
+			if (email == null || email.isEmpty() || username == null || username.isEmpty() || avatar == null
+					|| avatar.isEmpty() || birthdate == null || birthdate.isEmpty() || phoneNumber == null
+					|| phoneNumber.isEmpty() || experience == null || specialization == null || specialization.isEmpty()
+					|| password == null || password.isEmpty()) {
 				return Mono.error(() -> new BadRequest400("Some needed attribute are null or empty"));
 			}
 
@@ -154,7 +163,7 @@ public class ObjectServiceImplementation implements ObjectService {
 
 			// Set NewUserBoundary
 			nub.setEmail(email);
-			nub.setRole(Role.SUPERAPP_USER);
+			nub.setRole(Role.MINIAPP_USER);
 			nub.setUsername(username);
 			nub.setAvatar(avatar);
 
@@ -338,6 +347,24 @@ public class ObjectServiceImplementation implements ObjectService {
 				return Flux.error(new NotFound404("User not found"));
 			}
 		});
+	}
+
+	@Override
+	public Flux<MiniAppCommandBoundary> execute(MiniAppCommandBoundary input) {
+		// get the command from the command name.
+		// *THE COMMAND MUST BE GiveTips, else the execution will not work*
+		String executionName = input.getCommand().substring(input.getCommand().indexOf('-')+1);
+
+		CommandExec command;
+		try {
+			// get the command bean.
+			command = this.applicationContext.getBean(executionName, CommandExec.class);
+		} catch (Exception e) {
+			input.getCommandAttributes().put("result", "There is no service name like this.");
+			return Flux.just(input);
+		}
+		// execute the command.
+		return command.execute(input);
 	}
 
 }

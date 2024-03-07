@@ -1,6 +1,8 @@
 package demo.services;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,9 +17,11 @@ import demo.entities.ObjectEntity;
 import demo.exception.BadRequest400;
 import demo.exception.NotFound404;
 import demo.exception.UnauthorizedAccess401;
+import demo.interfaces.GeneralCommand;
 import demo.interfaces.MiniAppCommandCrud;
 import demo.interfaces.MiniAppCommandSevice;
 import demo.interfaces.ObjectCrud;
+import demo.interfaces.ObjectService;
 import demo.interfaces.UserCrud;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,6 +32,7 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 	private MiniAppCommandCrud commandCrud;
 	private UserCrud userCrud;
 	private ObjectCrud objectCrud;
+	private ObjectService objectService;
 
 	@Value("${spring.application.name}")
 	private String suparappName;
@@ -35,12 +40,13 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 	@Value("${helper.delimiter}")
 	private String delimiter;
 
-	public MiniAppCommandServiceImplementation(MiniAppCommandCrud commandCrud, UserCrud usercrud,
-			ObjectCrud objectCrud) {
+	public MiniAppCommandServiceImplementation(MiniAppCommandCrud commandCrud, UserCrud usercrud, ObjectCrud objectCrud,
+			ObjectService objectService) {
 		super();
 		this.commandCrud = commandCrud;
 		this.userCrud = usercrud;
 		this.objectCrud = objectCrud;
+		this.objectService = objectService;
 	}
 
 	@Override
@@ -54,7 +60,6 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 		command.setCommandId(comma);
 
 		command.setInvocationTimestamp(new Date());
-		// System.err.println(command.toString());
 
 		return Flux.just(command).flatMap(commandBoundary -> {
 
@@ -73,6 +78,13 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 									.switchIfEmpty(Mono.error(new NotFound404("Object not found")))
 									.flatMapMany(targetObject -> {
 										// return the commandBoundary if the user and target object is valid.
+										/*
+										 * commandBoundary.setCommand("searchByUserName"); Map<String,Object>m=new
+										 * HashMap<>(); m.put("UserName", "gay"); SearchByCriteriaCommand c=new
+										 * SearchByCriteriaCommand(this.objectCrud,commandBoundary) ;
+										 */
+
+										switchPosition(commandBoundary);
 										return Flux.just(commandBoundary);
 									});
 
@@ -85,4 +97,60 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 				.map(entity -> new MiniAppCommandBoundary(entity)).log();
 
 	}
+
+	private void switchPosition(MiniAppCommandBoundary m) {
+
+		String tar = m.getCommand().substring(0, m.getCommand().indexOf('-'));// format :name of command from start
+																				// index to -
+		switch (tar) {
+		case ("search"):
+
+			// SearchByCriteriaCommand searchCommand = new
+			// SearchByCriteriaCommand(this.objectCrud, m);
+			// searchCommand.execute().subscribe(objectEntity -> {
+			// //
+			// m.getCommandAttributes().put("results", objectEntity.getAlias());// to check
+			// results
+			// objectEntity.getObjectDetails().put("seen",
+			// m.getInvokedBy().getUserId().getEmail());
+			// marketObject(this.objectCrud.findById(m.getTargetObject().getObjectId().getId()),
+			// objectEntity.getAlias());
+			// this.objectCrud.save(objectEntity);
+			// System.err.println(objectEntity);
+			//
+			// });
+			break;
+		case ("meet"):
+			// RequestMeetingCommand RequestMeetingCommand = new RequestMeetingCommand(m,
+			// this.objectCrud);
+			break;
+		case ("counselor"):
+			// execute the command and store the execution result in variable.
+			Flux<MiniAppCommandBoundary> result = this.objectService.execute(m);
+			result.doOnNext(r -> {
+				// if the content is valid, means if the result message is telling the tips sent
+				if (r.getCommandAttributes().get("result").toString().equalsIgnoreCase("Tips sent to target object.")) {
+					// update the target object and add the tips to its objectDetails Map.
+					this.objectCrud.findById(r.getTargetObject().getObjectId().getSuperapp() + ":"
+							+ r.getTargetObject().getObjectId().getId()).flatMap(object -> {
+								object.getObjectDetails().put("tips", r.getCommandAttributes().get("tips"));
+								return this.objectCrud.save(object);
+							}).subscribe();
+				}
+			}).subscribe();
+
+			break;
+		default:
+			System.err.println("bb");
+
+		}
+	}
+
+	public void marketObject(Mono<ObjectEntity> objectMono, String a) {
+		objectMono.subscribe(objectEntity -> {
+			objectEntity.getObjectDetails().put("searched", a);
+			this.objectCrud.save(objectEntity);
+		});
+	}
+
 }
