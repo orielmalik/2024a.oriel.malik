@@ -1,10 +1,6 @@
 package demo.services;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -90,23 +86,9 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 					? (String) object.getObjectDetails().get("password")
 					: null;
 
-			// Create ArrayList <?>
-			ArrayList<?> offers = new ArrayList<>();
-			// Checking if the key "offers" is exist and ArrayList type
-			if (object.getObjectDetails().containsKey("offers")
-					&& object.getObjectDetails().get("offers") instanceof ArrayList) {
-				offers = (ArrayList<?>) object.getObjectDetails().get("offers");
-				if (!(offers.get(0) instanceof String)) // Checking the ArrayList type
-					return Mono.error(() -> new BadRequest400("The ArrayList type must to be String"));
-			}
-
-			else // The key "offers" is not exist or not ArrayList
-				offers = null;
-
 			if (email == null || email.isEmpty() || username == null || username.isEmpty() || avatar == null
-					|| avatar.isEmpty() || location == null || location.isEmpty() || birthdate == null
-					|| gender == null || gender.isEmpty() || password == null
-					|| password.isEmpty() || offers == null || offers.isEmpty()) {
+					|| avatar.isEmpty() || location == null || location.isEmpty() || birthdate == null || gender == null
+					|| gender.isEmpty() || password == null || password.isEmpty()) {
 				return Mono.error(() -> new BadRequest400("Some needed attribute are null or empty"));
 			}
 
@@ -154,32 +136,16 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 			String password = object.getObjectDetails().containsKey("password")
 					? (String) object.getObjectDetails().get("password")
 					: null;
-
-			// Create Map<map, map>
-			Map<?, ?> offersStatus = new HashMap<>();
-
-			// Checking if the key "offersStatus" exists and if the value is of type
-			// HashMap<String, Boolean>
-			if (object.getObjectDetails().containsKey("offersStatus")
-					&& object.getObjectDetails().get("offersStatus") instanceof HashMap<?, ?>) {
-				offersStatus = (Map<?, ?>) object.getObjectDetails().get("offersStatus");
-			}
-
-			else // The key "offersStatus" is not exist or not Map
-				offersStatus = null;
+			String gender = object.getObjectDetails().containsKey("gender")
+					? (String) object.getObjectDetails().get("gender")
+					: null;
 
 			if (email == null || email.isEmpty() || username == null || username.isEmpty() || avatar == null
-					|| avatar.isEmpty() || birthdate == null || phoneNumber == null
-					|| phoneNumber.isEmpty() || experience == null || specialization == null || specialization.isEmpty()
-					|| password == null || password.isEmpty() || offersStatus == null) {
+					|| avatar.isEmpty() || birthdate == null || phoneNumber == null || phoneNumber.isEmpty()
+					|| experience == null || specialization == null || specialization.isEmpty() || password == null
+					|| password.isEmpty() || gender == null || gender.isEmpty()) {
 				return Mono.error(() -> new BadRequest400("Some needed attribute are null or empty"));
 			}
-
-//			for (Entry<?, ?> entry : offersStatus.entrySet()) {
-//				if () // Checking if The ID is exist
-//					return Mono.error(
-//							() -> new BadRequest400("ID '" + entry.getKey() + "' is not exist."));
-//			}
 
 			// Create new UserBoundary
 			NewUserBoundary nub = new NewUserBoundary();
@@ -282,12 +248,13 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 							if (update.getType() != null && update.getType() != "") {
 								entity.setType(update.getType());
 							}
-							
-							if (update.getObjectDetails().containsKey("offersStatus")) {
-								Map<?, ?> offersStatus = new HashMap<>();
-								entity.setObjectDetails(update.getObjectDetails());
+							for (Object key : update.getObjectDetails().entrySet()) {
+								Object value = update.getObjectDetails().get(key);
+								if (value != null && value != "") {
+									entity.getObjectDetails().put((String) key, value);
+								}
 							}
-							
+
 							// check if alias is null or empty string.
 							if (update.getAlias() != null && update.getAlias() != "") {
 								entity.setAlias(update.getAlias());

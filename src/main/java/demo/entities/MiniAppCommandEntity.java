@@ -7,7 +7,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import demo.InvokedBy;
-import demo.ObjectId;
 import demo.TargetObject;
 
 @Document(collection = "Commands")

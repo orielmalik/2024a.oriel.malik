@@ -92,6 +92,8 @@ public class GiveTips implements CommandExec {
 			return Flux.just(input);
 		} 
 		// add result message if every thing is valid.
+		
+		// TODO update object
 		else {
 			input.getCommandAttributes().put("result", "tips sent to target object.");
 		}
