@@ -77,10 +77,8 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 							return this.objectCrud.findByObjectIdAndActiveIsTrue(targetObjectid)
 									.switchIfEmpty(Mono.error(new NotFound404("Object not found")))
 									.flatMapMany(targetObject -> {
-							
-									
-										switchPosition(commandBoundary);
-										return Flux.just(commandBoundary);
+										return	switchPosition(commandBoundary);
+
 									});
 
 						}
@@ -92,57 +90,65 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 				.map(entity -> new MiniAppCommandBoundary(entity)).log();
 
 	}
-	private void switchPosition(MiniAppCommandBoundary m)
+	private Flux<MiniAppCommandBoundary> switchPosition(MiniAppCommandBoundary m)
 	{
-		//consluer-makeTips
 		String tar=m.getCommand().substring(0, m.getCommand().indexOf('-'));//format :name of  command from start index to -
 		switch(tar) {
 		case ("search"):
-
 			SearchByCriteriaCommand searchCommand=new SearchByCriteriaCommand(this.objectCrud,m) ;
-		searchCommand.execute().subscribe(objectEntity -> {
-		    // 
-			/*				ArrayList<String>lst=(	ArrayList<String>)objectEntity.getObjectDetails().get("views");
-		lst.add(m.getTargetObject().getObjectId().getId());
-			objectEntity.getObjectDetails().put("views",lst);
-			m.getCommandAttributes().put("results", 	objectEntity.getObjectDetails());//to check results
-*/
-//update-findById-map
-		updateObjectEntinty(objectEntity.getObjectId(),m.getTargetObject().getObjectId().getId(),0);
-		//updateObjectEntinty(m.getTargetObject().getObjectId().getId(),objectEntity.getObjectId(),1);
+	return 	searchCommand.execute().flatMap(objectEntity -> {
+		return
+					updateObjectEntinty(objectEntity.getObjectId(),m.getTargetObject().getObjectId().getId(),0)
+					.then( updateObjectEntinty(m.getTargetObject().getObjectId().getId(),objectEntity.getObjectId(),1))
+					.thenMany(Flux.just(m))
+					.log();
 
-			
+
 		});
-		break;
 		case ("meet"):
-RequestMeetingCommand  RequestMeetingCommand=new RequestMeetingCommand(m,this.objectCrud);
-		case ("consluer"):
+			break;
+		
 
 	default:
 		
-		System.err.println("bb");
+		  return Flux.error(new BadRequest400("Your error request "));
+
 
 		}
+		  return Flux.error(new BadRequest400("Your error request "));
+
 	}
 	private Mono<Void> updateObjectEntinty(String objectEntityID,String TargetObjectID,int mode) {
-		// TODO Auto-generated method stub
 			return this.objectCrud
 				.findById(objectEntityID)
 				.map(entity->{
-					System.err.println(entity);
+				//	System.err.println(entity);
+					ArrayList<String>lst;	
 
 					try {
 				if(entity.getObjectDetails()!=null)
 				{
 					if((mode==0)) {
-				ArrayList<String>lst=(	ArrayList<String>)entity.getObjectDetails().get("views");
+						initlst("views",entity);
+
+			lst=(	ArrayList<String>)entity.getObjectDetails().get("views");
 				lst.add(TargetObjectID);
 				entity.getObjectDetails().put("views",lst);
-					}else {
-						ArrayList<String>lst=(	ArrayList<String>)entity.getObjectDetails().get("seen");
+					}else if(mode==1) {
+						initlst("seen",entity);
+
+				 lst=(ArrayList<String>)entity.getObjectDetails().get("seen");
 						lst.add(TargetObjectID);
 						entity.getObjectDetails().put("seen",lst);	
-					}}}
+						
+						
+					}
+					else
+					{
+						
+					}
+				}
+				}
 				catch(NullPointerException n)
 				{
 					System.err.println(n.toString());
@@ -156,6 +162,13 @@ RequestMeetingCommand  RequestMeetingCommand=new RequestMeetingCommand(m,this.ob
 				.map(ObjectBoundary::new).then();
 	
 		
+	}
+	private void initlst( String key,ObjectEntity o)
+	{
+		if(o.getObjectDetails().get(key)==null)
+		{
+			o.getObjectDetails().put(key,new ArrayList<String>());
+		}
 	}
 	/*@Override
 	public Mono<Void> updateMessage(

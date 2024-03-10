@@ -31,14 +31,36 @@ public class ObjectBoundary {
 			this.objectId.setSuperapp(splitedObjectId[0]).setId(splitedObjectId[1]);
 		this.setType(entity.getType()).setAlias(entity.getAlias()).setActive(entity.getActive())
 				.setCreationTimestamp(entity.getCreationTimestamp())
-				.setCreatedBy(new CreatedBy(entity.getUserIdSuperapp(), entity.getUserIdEmail()))
-				.setObjectDetails(entity.getObjectDetails());
+				.setCreatedBy(new CreatedBy(entity.getUserIdSuperapp(), entity.getUserIdEmail()));
+		this.setObjectDetails(entity.getObjectDetails());
+		//putValuesAtObjectDeatils(entity,type);
 	}
 
-	private Map<String,Object> putValuesAtObjectDeatils(ObjectEntity entity)
+	private void putValuesAtObjectDeatils(ObjectEntity entity,String type)
 	{
-		entity.getObjectDetails().put("gender", entity.getGender());
-		return entity.getObjectDetails();
+	if(type=="dreamer"||type=="counselor") {
+		this.getObjectDetails().put("gender", entity.getGender());
+		this.getObjectDetails().put("birthdate", entity.getBirthdate());
+		this.getObjectDetails().put("username", entity.getGender());
+		this.getObjectDetails().put("password", entity.getGender());
+if(type=="dreamer")
+{
+	this.getObjectDetails().put("viewscount", entity.getViewscount());
+	this.getObjectDetails().put("offers", entity.getOffers());
+
+}
+else if(type=="counselor")
+{
+	
+}
+else if(type=="product")
+{
+	this.getObjectDetails().put("price", entity.getPrice());
+	this.getObjectDetails().put("supplyDays", entity.getsupplyDays());
+	this.getObjectDetails().put("gender", entity.getGender());
+
+}
+		}
 		
 	}
 	public ObjectBoundary(String type, String alias, boolean active, Date createdTimestamp, CreatedBy createdBy,
@@ -123,12 +145,9 @@ public class ObjectBoundary {
 				.setType(this.getType()).setActive(this.getActive()).setAlias(this.getAlias())
 				.setObjectDetails(this.getObjectDetails()).setUserIdEmail(this.getCreatedBy().getUserId().getEmail())
 				.setUserIdSuperapp(this.getCreatedBy().getUserId().getSuperapp());
-//the new attributes for ObjectDeatils
-		this.getObjectDetails().put("gender","None");
-		this.getObjectDetails().put("views",new ArrayList<String>());
 
-		entity.setGender((String)this.getObjectDetails().get("gender"));
-	entity.setViews((ArrayList<String>) this.getObjectDetails().get("views"));
+
+		//entity.setGender((boolean)this.getObjectDetails().get("gender"));
 		return entity;
 	}
 

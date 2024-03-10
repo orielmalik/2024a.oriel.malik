@@ -23,11 +23,15 @@ public class ObjectEntity {
 	private String userIdEmail;
 	private Map<String, Object> objectDetails;
 	//new attributes for this map
-	private String gender;
+	
+	private String location;
+	private boolean gender;//1-male
 	private long viewscount;
 	private long birthdate;
-
+private double price;
 	private ArrayList<String>views;
+	private ArrayList<String> offers;
+	private int supplyDays;
 	public ObjectEntity() {
 
 	}
@@ -127,11 +131,11 @@ public ArrayList<String> getViews()
 				+ userIdSuperapp + ", userIdEmail=" + userIdEmail + ", objectDetails=" + objectDetails + "]";
 	}
 
-	public String getGender() {
+	public boolean getGender() {
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(boolean gender) {
 		this.gender = gender;
 	}
 
@@ -143,6 +147,40 @@ public ArrayList<String> getViews()
 
 	public void setViewscount(long viewscount) {
 		this.viewscount = viewscount;
+	}
+
+	public long getBirthdate() {
+		return birthdate;
+	}
+
+	public void setBirthdate(long birthdate) {
+		this.birthdate = birthdate;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public ArrayList<String> getOffers() {
+		// TODO Auto-generated method stub
+		return this.offers;
+	}
+
+	public int getsupplyDays() {
+		// TODO Auto-generated method stub
+		return  this.supplyDays;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 

@@ -13,6 +13,7 @@ import demo.exception.BadRequest400;
 import demo.interfaces.GeneralCommand;
 import demo.interfaces.ObjectCrud;
 import demo.interfaces.UserCrud;
+import jdk.javadoc.doclet.Taglet.Location;
 import reactor.core.publisher.Flux;
 
 public class SearchByCriteriaCommand implements GeneralCommand {
@@ -31,8 +32,7 @@ private MiniAppCommandBoundary miniAppCommandBoundary;
 		// TODO Auto-generated method stub
 		String specificCommand = (String) miniAppCommandBoundary.getCommand();// Null-return exception
 		switch (specificCommand) {
-		case ("search-ByUserName"):
-			
+		case ("search-ByUserNameLike"):
 			String userName = (String) miniAppCommandBoundary.getCommandAttributes().get("UserName");
 		if(userName==null)
 		{
@@ -40,18 +40,28 @@ private MiniAppCommandBoundary miniAppCommandBoundary;
 		}
 			return this.objectcrud.findAllByActiveIsTrueAndAliasLike(userName);
 	
-	/*case ("search-ByAge"): 
-			// TODO format LocalDate and
-					return this.objectcrud.findAll(null)
-*/
-		
+	case ("search-ByAge"): 
+		long birthdate = (long) miniAppCommandBoundary.getCommandAttributes().get("birthdate");
+					return this.objectcrud.findByBirthdateGreaterThan(birthdate);
+							
 		case ("search-Bygender"):
-			String gender = (String) miniAppCommandBoundary.getCommandAttributes().get("gender");
-		return this.objectcrud. findByGender(gender);
+			boolean gender = (boolean) miniAppCommandBoundary.getCommandAttributes().get("gender");
+		return this.objectcrud. findByGenderNot(gender);
 
+
+		case ("search-Bylocation"):
+			String location = (String) miniAppCommandBoundary.getCommandAttributes().get("location");
+		if(Location.valueOf(location) == null)
+		{
+			return Flux.error(new BadRequest400("Not found this location"));
+		}
+		return this.objectcrud. findByLocation(location);
+
+		
 		case("search-ByPopular"):
-			//
-			
+			String  a = (String) miniAppCommandBoundary.getCommandAttributes().get("UserName");
+		return this.objectcrud.findByAliasOrderByViewscountDesc(a);
+
 		default:
 			return this.objectcrud.findAll();
 
