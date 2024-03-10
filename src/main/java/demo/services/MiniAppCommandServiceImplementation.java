@@ -17,7 +17,7 @@ import demo.entities.ObjectEntity;
 import demo.exception.BadRequest400;
 import demo.exception.NotFound404;
 import demo.exception.UnauthorizedAccess401;
-import demo.interfaces.GeneralCommand;
+//import demo.interfaces.GeneralCommand;
 import demo.interfaces.MiniAppCommandCrud;
 import demo.interfaces.MiniAppCommandSevice;
 import demo.interfaces.ObjectCrud;
@@ -54,7 +54,7 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 
 		if (miniAppName == null || miniAppName.isEmpty() || command.getCommand() == null
 				|| command.getCommand().isEmpty()) {
-			return Flux.error(new BadRequest400("MINI APP OR COMMAND NAME  IS NULL"));
+			return Flux.error(new BadRequest400("MINI APP OR COMMAND NAME IS NULL"));
 		}
 		CommandId comma = new CommandId(suparappName, miniAppName, UUID.randomUUID().toString());
 		command.setCommandId(comma);
@@ -139,6 +139,9 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 				}
 			}).subscribe();
 
+			break;
+		case ("dreamer"):
+			
 			break;
 		default:
 			System.err.println("bb");

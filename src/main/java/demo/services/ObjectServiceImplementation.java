@@ -2,6 +2,9 @@ package demo.services;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -77,8 +80,8 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 			String location = object.getObjectDetails().containsKey("location")
 					? (String) object.getObjectDetails().get("location")
 					: null;
-			String birthdate = object.getObjectDetails().containsKey("birthdate")
-					? (String) object.getObjectDetails().get("birthdate")
+			Integer birthdate = object.getObjectDetails().containsKey("birthdate")
+					? (Integer) object.getObjectDetails().get("birthdate")
 					: null;
 			String gender = object.getObjectDetails().containsKey("gender")
 					? (String) object.getObjectDetails().get("gender")
@@ -102,7 +105,7 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 
 			if (email == null || email.isEmpty() || username == null || username.isEmpty() || avatar == null
 					|| avatar.isEmpty() || location == null || location.isEmpty() || birthdate == null
-					|| birthdate.isEmpty() || gender == null || gender.isEmpty() || password == null
+					|| gender == null || gender.isEmpty() || password == null
 					|| password.isEmpty() || offers == null || offers.isEmpty()) {
 				return Mono.error(() -> new BadRequest400("Some needed attribute are null or empty"));
 			}
@@ -136,8 +139,8 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 			String avatar = object.getObjectDetails().containsKey("avatar")
 					? (String) object.getObjectDetails().get("avatar")
 					: null;
-			String birthdate = object.getObjectDetails().containsKey("birthdate")
-					? (String) object.getObjectDetails().get("birthdate")
+			Integer birthdate = object.getObjectDetails().containsKey("birthdate")
+					? (Integer) object.getObjectDetails().get("birthdate")
 					: null;
 			String phoneNumber = object.getObjectDetails().containsKey("phoneNumber")
 					? (String) object.getObjectDetails().get("phoneNumber")
@@ -151,12 +154,32 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 			String password = object.getObjectDetails().containsKey("password")
 					? (String) object.getObjectDetails().get("password")
 					: null;
+
+			// Create Map<map, map>
+			Map<?, ?> offersStatus = new HashMap<>();
+
+			// Checking if the key "offersStatus" exists and if the value is of type
+			// HashMap<String, Boolean>
+			if (object.getObjectDetails().containsKey("offersStatus")
+					&& object.getObjectDetails().get("offersStatus") instanceof HashMap<?, ?>) {
+				offersStatus = (Map<?, ?>) object.getObjectDetails().get("offersStatus");
+			}
+
+			else // The key "offersStatus" is not exist or not Map
+				offersStatus = null;
+
 			if (email == null || email.isEmpty() || username == null || username.isEmpty() || avatar == null
-					|| avatar.isEmpty() || birthdate == null || birthdate.isEmpty() || phoneNumber == null
+					|| avatar.isEmpty() || birthdate == null || phoneNumber == null
 					|| phoneNumber.isEmpty() || experience == null || specialization == null || specialization.isEmpty()
-					|| password == null || password.isEmpty()) {
+					|| password == null || password.isEmpty() || offersStatus == null) {
 				return Mono.error(() -> new BadRequest400("Some needed attribute are null or empty"));
 			}
+
+//			for (Entry<?, ?> entry : offersStatus.entrySet()) {
+//				if () // Checking if The ID is exist
+//					return Mono.error(
+//							() -> new BadRequest400("ID '" + entry.getKey() + "' is not exist."));
+//			}
 
 			// Create new UserBoundary
 			NewUserBoundary nub = new NewUserBoundary();
@@ -259,7 +282,12 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 							if (update.getType() != null && update.getType() != "") {
 								entity.setType(update.getType());
 							}
-							entity.setObjectDetails(update.getObjectDetails());
+							
+							if (update.getObjectDetails().containsKey("offersStatus")) {
+								Map<?, ?> offersStatus = new HashMap<>();
+								entity.setObjectDetails(update.getObjectDetails());
+							}
+							
 							// check if alias is null or empty string.
 							if (update.getAlias() != null && update.getAlias() != "") {
 								entity.setAlias(update.getAlias());
@@ -353,7 +381,7 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 	public Flux<MiniAppCommandBoundary> execute(MiniAppCommandBoundary input) {
 		// get the command from the command name.
 		// *THE COMMAND MUST BE GiveTips, else the execution will not work*
-		String executionName = input.getCommand().substring(input.getCommand().indexOf('-')+1);
+		String executionName = input.getCommand().substring(input.getCommand().indexOf('-') + 1);
 
 		CommandExec command;
 		try {
