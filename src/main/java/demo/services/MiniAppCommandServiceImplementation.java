@@ -112,46 +112,7 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 		case ("meet"):
 			break;
 		case ("counselor"):
-
-			if (m.getCommand().equalsIgnoreCase("counselor-GiveTips")) {
-				// execute the command and store the execution result in variable.
-				Flux<MiniAppCommandBoundary> result = this.objectService.execute(m);
-				result.doOnNext(r -> {
-					// if the content is valid, means if the result message is telling the tips sent
-					if (r.getCommandAttributes().get("result").toString()
-							.equalsIgnoreCase("Tips sent to target object.")) {
-						// update the target object and add the tips to its objectDetails Map.
-						this.objectCrud.findById(r.getTargetObject().getObjectId().getSuperapp() + ":"
-								+ r.getTargetObject().getObjectId().getId()).flatMap(object -> {
-									object.getObjectDetails().put("tips", r.getCommandAttributes().get("tips"));
-									return this.objectCrud.save(object);
-								}).subscribe();
-					}
-				}).subscribe();
-			} else if (m.getCommand().equalsIgnoreCase("counselor-Offers")) {
-
-				Flux<MiniAppCommandBoundary> result = this.objectService.execute(m);
-				result.doOnNext(r -> {
-					// if the content is valid, means if the result message is telling the tips sent
-					if (r.getCommandAttributes().containsKey("result")) {
-						// update the target object and add the tips to its objectDetails Map.
-						this.objectCrud.findById(r.getTargetObject().getObjectId().getSuperapp() + ":"
-								+ r.getTargetObject().getObjectId().getId()).flatMap(object -> {
-									if (r.getCommandAttributes().containsKey("offers")) {
-										object.getObjectDetails().put("counselorOffers",
-												r.getCommandAttributes().get("offers"));
-									} else if (r.getCommandAttributes().containsKey("offersResponse")) {
-										object.getObjectDetails().put("acceptedOffers",
-												r.getCommandAttributes().get("offersResponse"));
-										object.getObjectDetails().remove("counselorOffers");
-									}
-									return this.objectCrud.save(object);
-								}).subscribe();
-					}
-				}).subscribe();
-			}
-			break;
-
+			return this.objectService.execute(m);
 		default:
 
 			return Flux.error(new BadRequest400("Your error request "));

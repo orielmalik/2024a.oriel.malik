@@ -8,7 +8,7 @@ import demo.interfaces.GeneralCommand;
 import demo.interfaces.ObjectCrud;
 import reactor.core.publisher.Flux;
 
-@Component("SEARCHByCriteria ")
+
 public class SearchByCriteriaCommand implements GeneralCommand {
 
 	private ObjectCrud objectcrud;

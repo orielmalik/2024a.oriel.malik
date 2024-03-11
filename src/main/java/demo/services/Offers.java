@@ -3,29 +3,31 @@ package demo.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import demo.boundries.MiniAppCommandBoundary;
+import demo.boundries.ObjectBoundary;
 import demo.interfaces.CommandExec;
+import demo.interfaces.MyUpdateMethod;
 import demo.interfaces.ObjectCrud;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component(value = "Offers")
-public class Offers implements CommandExec {
+public class Offers implements CommandExec, MyUpdateMethod {
 
-	private final ObjectCrud objectCrud;
-
-	public Offers(ObjectCrud objectCrud) {
-		this.objectCrud = objectCrud;
-	}
+	@Autowired
+	private ObjectCrud objectCrud;
 
 	@Value("${helper.delimiter}")
 	private String delimiter;
 
 	@Override
 	public Flux<MiniAppCommandBoundary> execute(MiniAppCommandBoundary input) {
+		String targetObjectId = input.getTargetObject().getObjectId().getSuperapp() + delimiter
+				+ input.getTargetObject().getObjectId().getId();
 		if (input.getCommandAttributes() == null) {
 			input.setCommandAttributes(new HashMap<>());
 		}
@@ -40,12 +42,12 @@ public class Offers implements CommandExec {
 			}
 			Map<String, Object> counselorOffers = new HashMap<>();
 			counselorOffers.put("counselorOffers", offers);
-			// update dreamer
-			udpateDreamerObject(counselorOffers, input.getTargetObject().getObjectId().getSuperapp(),
-					input.getTargetObject().getObjectId().getId());
+
 			// update command boundary
 			input.getCommandAttributes().put("result", "offers sent to dreamer, waitting for response.");
-			return Flux.just(input);
+			// update dreamer
+			return updateCounselorTargetObjects(targetObjectId, counselorOffers).thenMany(Flux.just(input)).log();
+
 		}
 
 		else if (input.getCommandAttributes().containsKey("offersResponse")) {
@@ -60,13 +62,11 @@ public class Offers implements CommandExec {
 			Map<String, Object> dreamerAcceptedOffers = new HashMap<>();
 			dreamerAcceptedOffers.put("acceptedOffers", offersResponse);
 
-			// update dreamer with the offers response
-			udpateDreamerObject(dreamerAcceptedOffers, input.getTargetObject().getObjectId().getSuperapp(),
-					input.getTargetObject().getObjectId().getId());
-
 			// update command boundary
 			input.getCommandAttributes().put("result", "offers accepted by dreamer.");
-			return Flux.just(input);
+			// update dreamer
+			return updateCounselorTargetObjects(targetObjectId, dreamerAcceptedOffers).thenMany(Flux.just(input)).log();
+
 		}
 
 		input.getCommandAttributes().put("result",
@@ -75,14 +75,13 @@ public class Offers implements CommandExec {
 		return Flux.just(input);
 	}
 
-	public Mono<Void> udpateDreamerObject(Map<String, Object> objectDetails, String targetObjectSuperapp,
-			String targetObjectId) {
-		String objectId = targetObjectSuperapp + delimiter + targetObjectId;
-		return this.objectCrud.findById(objectId).map(object -> {
-			object.setObjectDetails(objectDetails);
-			return this.objectCrud.save(object);
-		}).log().then();
-
+	@Override
+	public Mono<Void> updateCounselorTargetObjects(String targetObjectId, Map<String, Object> details) {
+		return this.objectCrud.findById(targetObjectId).map(object -> {
+			object.getObjectDetails().remove("counselorOffers");
+			details.forEach((key, value) -> object.getObjectDetails().put(key, value));
+			return object;
+		}).flatMap(this.objectCrud::save).map(ObjectBoundary::new).then();
 	}
 
 }

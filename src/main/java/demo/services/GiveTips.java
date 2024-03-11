@@ -8,15 +8,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import demo.boundries.MiniAppCommandBoundary;
+import demo.boundries.ObjectBoundary;
 import demo.interfaces.CommandExec;
+import demo.interfaces.MyUpdateMethod;
+import demo.interfaces.ObjectCrud;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component(value = "GiveTips")
-public class GiveTips implements CommandExec {
+public class GiveTips implements CommandExec, MyUpdateMethod {
+	@Autowired
+	private ObjectCrud objectCrud;
 	private String[] badWords = { "fuck", "shit", "damn", "asshole", "bitch", "bastard", "cock", "cunt", "dick", "piss",
 			"slut", "whore", "motherfucker", "ass", "arse", "bollocks", "bullshit", "crap", "douchebag", "fanny",
 			"goddamn", "jackass", "prick", "pussy", "wanker", "twat", "bastard", "bloody", "bugger", "censored",
@@ -84,12 +91,14 @@ public class GiveTips implements CommandExec {
 		}
 		// add result message if every thing is valid.
 
-		// TODO update object
 		else {
 			input.getCommandAttributes().put("result", "tips sent to target object.");
 		}
+		String targetObjectId = input.getTargetObject().getObjectId().getSuperapp() + delimiter
+				+ input.getTargetObject().getObjectId().getId();
+		return updateCounselorTargetObjects(targetObjectId, input.getCommandAttributes()).thenMany(Flux.just(input))
+				.log();
 
-		return Flux.just(input);
 	}
 
 	public int containsBadWords(String inputString, String[] badWords) {
@@ -106,5 +115,15 @@ public class GiveTips implements CommandExec {
 		}
 
 		return counter;
+	}
+
+	@Override
+	public Mono<Void> updateCounselorTargetObjects(String targetObjectId, Map<String, Object> details) {
+		Map<String, Object> temp = new HashMap<>(details);
+		temp.remove("result");
+		return this.objectCrud.findById(targetObjectId).map(object -> {
+			temp.forEach((key, value) -> object.getObjectDetails().put(key, value));
+			return object;
+		}).flatMap(this.objectCrud::save).map(ObjectBoundary::new).then();
 	}
 }
