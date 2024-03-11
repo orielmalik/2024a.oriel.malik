@@ -41,19 +41,18 @@ public class UserServiceImplementation implements UserService {
 		if (user.getAvatar() == null || user.getAvatar() == "") {
 			return Mono.error(() -> new BadRequest400("Avatar cant be null or empty string."));
 		}
-		
+
 		if (user.getRole() == null)
 			return Mono.error(() -> new BadRequest400("Role cant be null"));
 
 		if (user.getUsername() == null || user.getUsername() == "")
 			return Mono.error(() -> new BadRequest400("Username cant be null or empty string"));
-		
+
 		// check if the user's email is already in use.
 		return this.userCrud.existsByEmail(user.getEmail()).flatMap(exists -> {
 			if (exists) { // if used
 				return Mono.error(new BadRequest400("This email is already used.")); // return an error.
-			}
-			else {// else, save the user in the database.
+			} else {// else, save the user in the database.
 				UserBoundary ub = new UserBoundary();
 				ub.setUserId(new UserId(suparappName, user.getEmail())).setRole(user.getRole())
 						.setUsername(user.getUsername()).setAvatar(user.getAvatar());

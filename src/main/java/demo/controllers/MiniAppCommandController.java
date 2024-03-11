@@ -12,18 +12,20 @@ import demo.services.MiniAppCommandServiceImplementation;
 import reactor.core.publisher.Flux;
 
 @RestController
-@RequestMapping(path = {"/superapp/miniapp"})	
+@RequestMapping(path = { "/superapp/miniapp" })
 public class MiniAppCommandController {
-	
+
 	private MiniAppCommandServiceImplementation commandService;
 
 	public MiniAppCommandController(MiniAppCommandServiceImplementation commandService) {
 		this.commandService = commandService;
 	}
-	
-	@PostMapping(path = { "/{miniAppName}" }, consumes = {MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	 public Flux<MiniAppCommandBoundary> invokeMiniApp(@PathVariable("miniAppName") String miniAppName, @RequestBody MiniAppCommandBoundary command){
-	           return commandService.invoke(command, miniAppName);
+
+	@PostMapping(path = { "/{miniAppName}" }, consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE })
+	public Flux<MiniAppCommandBoundary> invokeMiniApp(@PathVariable("miniAppName") String miniAppName,
+			@RequestBody MiniAppCommandBoundary command) {
+		return commandService.invoke(command, miniAppName);
 	}
 
 }

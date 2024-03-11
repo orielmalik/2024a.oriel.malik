@@ -3,10 +3,10 @@ package demo.entities;
 public class UserId {
 	private String superapp;
 	private String email;
-	
+
 	public UserId() {
 	}
-	
+
 	public UserId(String superapp, String email) {
 		this.superapp = superapp;
 		this.email = email;

@@ -45,13 +45,8 @@ public class GiveTips implements CommandExec {
 
 		// check if the tips sent as a Map.
 		/*
-		 * for example, 
-		 * commandAttributes:{ 
-		 * 		"tips" : { 
-		 * 			"tip1" : "my tip1",
-		 * 			"tip2" : "my tip2" 
-		 * 		} 
-		 * }
+		 * for example, commandAttributes:{ "tips" : { "tip1" : "my tip1", "tip2" :
+		 * "my tip2" } }
 		 */
 		if (tips instanceof Map<?, ?>) {
 			// cast the tips to Map<String,String>
@@ -75,11 +70,7 @@ public class GiveTips implements CommandExec {
 
 		// check if the tips sent as string
 		/*
-		 * for example,
-		 *  commandAttributes:{ 
-		 *  	"tips" : "1. first tip
-		 *  			  2. second tip"
-		 * 	}
+		 * for example, commandAttributes:{ "tips" : "1. first tip 2. second tip" }
 		 */
 		if (tips instanceof String) {
 			tipsContentString = (String) tips;
@@ -90,9 +81,9 @@ public class GiveTips implements CommandExec {
 			input.getCommandAttributes().put("result",
 					"There is " + validateContentResult + " bad words, please be respectful.");
 			return Flux.just(input);
-		} 
+		}
 		// add result message if every thing is valid.
-		
+
 		// TODO update object
 		else {
 			input.getCommandAttributes().put("result", "tips sent to target object.");

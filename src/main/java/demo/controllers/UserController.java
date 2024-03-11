@@ -17,26 +17,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping(path = {"/superapp/users"})	// ${spring.application.name}
+@RequestMapping(path = { "/superapp/users" }) // ${spring.application.name}
 public class UserController {
 	private UserService userService;
-	
+
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
-	
-	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})	
+
+	@PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	public Mono<UserBoundary> create(@RequestBody NewUserBoundary user) {
 		return this.userService.create(user);
 	}
-	
-	@GetMapping(path = {"/login/{superapp}/{email}"}, produces = {MediaType.APPLICATION_JSON_VALUE})
+
+	@GetMapping(path = { "/login/{superapp}/{email}" }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Mono<UserBoundary> login(@PathVariable("superapp") String superapp, @PathVariable("email") String email) {
 		return this.userService.login(superapp, email);
 	}
-	
-	@PutMapping(path = {"/{superapp}/{email}"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
-	public Mono<Void> update(@PathVariable("superapp") String superapp, @PathVariable("email") String email, @RequestBody UserBoundary user) {
-		return this.userService.update(superapp,email, user);
+
+	@PutMapping(path = { "/{superapp}/{email}" }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	public Mono<Void> update(@PathVariable("superapp") String superapp, @PathVariable("email") String email,
+			@RequestBody UserBoundary user) {
+		return this.userService.update(superapp, email, user);
 	}
 }

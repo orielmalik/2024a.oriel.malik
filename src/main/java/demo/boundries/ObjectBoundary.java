@@ -26,11 +26,33 @@ public class ObjectBoundary {
 		this.objectId = new ObjectId();
 		if (entity.getObjectId() != null)
 			this.objectId.setSuperapp(splitedObjectId[0]).setId(splitedObjectId[1]);
-
 		this.setType(entity.getType()).setAlias(entity.getAlias()).setActive(entity.getActive())
 				.setCreationTimestamp(entity.getCreationTimestamp())
-				.setCreatedBy(new CreatedBy(entity.getUserIdSuperapp(), entity.getUserIdEmail()))
-				.setObjectDetails(entity.getObjectDetails());
+				.setCreatedBy(new CreatedBy(entity.getUserIdSuperapp(), entity.getUserIdEmail()));
+		this.setObjectDetails(entity.getObjectDetails());
+		// putValuesAtObjectDeatils(entity,type);
+	}
+
+	private void putValuesAtObjectDeatils(ObjectEntity entity, String type) {
+		if (type == "dreamer" || type == "counselor") {
+			this.getObjectDetails().put("gender", entity.getGender());
+			this.getObjectDetails().put("birthdate", entity.getBirthdate());
+			this.getObjectDetails().put("username", entity.getGender());
+			this.getObjectDetails().put("password", entity.getGender());
+			if (type == "dreamer") {
+				this.getObjectDetails().put("viewscount", entity.getViewscount());
+				this.getObjectDetails().put("offers", entity.getOffers());
+
+			} else if (type == "counselor") {
+
+			} else if (type == "product") {
+				this.getObjectDetails().put("price", entity.getPrice());
+				this.getObjectDetails().put("supplyDays", entity.getsupplyDays());
+				this.getObjectDetails().put("gender", entity.getGender());
+
+			}
+		}
+
 	}
 
 	public ObjectBoundary(String type, String alias, boolean active, Date createdTimestamp, CreatedBy createdBy,
@@ -116,6 +138,7 @@ public class ObjectBoundary {
 				.setObjectDetails(this.getObjectDetails()).setUserIdEmail(this.getCreatedBy().getUserId().getEmail())
 				.setUserIdSuperapp(this.getCreatedBy().getUserId().getSuperapp());
 
+		// entity.setGender((boolean)this.getObjectDetails().get("gender"));
 		return entity;
 	}
 

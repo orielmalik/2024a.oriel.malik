@@ -1,5 +1,6 @@
 package demo.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
@@ -9,11 +10,11 @@ import org.springframework.stereotype.Service;
 import demo.CommandId;
 import demo.Role;
 import demo.boundries.MiniAppCommandBoundary;
+import demo.boundries.ObjectBoundary;
 import demo.entities.ObjectEntity;
 import demo.exception.BadRequest400;
 import demo.exception.NotFound404;
 import demo.exception.UnauthorizedAccess401;
-//import demo.interfaces.GeneralCommand;
 import demo.interfaces.MiniAppCommandCrud;
 import demo.interfaces.MiniAppCommandSevice;
 import demo.interfaces.ObjectCrud;
@@ -73,15 +74,9 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 							return this.objectCrud.findByObjectIdAndActiveIsTrue(targetObjectid)
 									.switchIfEmpty(Mono.error(new NotFound404("Object not found")))
 									.flatMapMany(targetObject -> {
-										// return the commandBoundary if the user and target object is valid.
-										/*
-										 * commandBoundary.setCommand("searchByUserName"); Map<String,Object>m=new
-										 * HashMap<>(); m.put("UserName", "gay"); SearchByCriteriaCommand c=new
-										 * SearchByCriteriaCommand(this.objectCrud,commandBoundary) ;
-										 */
 
-										switchPosition(commandBoundary);
-										return Flux.just(commandBoundary);
+										return switchPosition(commandBoundary);
+
 									});
 
 						}
@@ -94,31 +89,27 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 
 	}
 
-	private void switchPosition(MiniAppCommandBoundary m) {
+	public void marketObject(Mono<ObjectEntity> objectMono, String a) {
+		objectMono.subscribe(objectEntity -> {
+			objectEntity.getObjectDetails().put("searched", a);
+			this.objectCrud.save(objectEntity);
+		});
+	}
 
+	private Flux<MiniAppCommandBoundary> switchPosition(MiniAppCommandBoundary m) {
 		String tar = m.getCommand().substring(0, m.getCommand().indexOf('-'));// format :name of command from start
 																				// index to -
 		switch (tar) {
 		case ("search"):
+			SearchByCriteriaCommand searchCommand = new SearchByCriteriaCommand(this.objectCrud, m);
+			return searchCommand.execute().flatMap(objectEntity -> {
+				return updateObjectEntinty(objectEntity.getObjectId(), m.getTargetObject().getObjectId().getId(), 0)
+						.then(updateObjectEntinty(m.getTargetObject().getObjectId().getId(), objectEntity.getObjectId(),
+								1))
+						.thenMany(Flux.just(m)).log();
 
-			// SearchByCriteriaCommand searchCommand = new
-			// SearchByCriteriaCommand(this.objectCrud, m);
-			// searchCommand.execute().subscribe(objectEntity -> {
-			// //
-			// m.getCommandAttributes().put("results", objectEntity.getAlias());// to check
-			// results
-			// objectEntity.getObjectDetails().put("seen",
-			// m.getInvokedBy().getUserId().getEmail());
-			// marketObject(this.objectCrud.findById(m.getTargetObject().getObjectId().getId()),
-			// objectEntity.getAlias());
-			// this.objectCrud.save(objectEntity);
-			// System.err.println(objectEntity);
-			//
-			// });
-			break;
+			});
 		case ("meet"):
-			// RequestMeetingCommand RequestMeetingCommand = new RequestMeetingCommand(m,
-			// this.objectCrud);
 			break;
 		case ("counselor"):
 
@@ -160,17 +151,55 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 				}).subscribe();
 			}
 			break;
+
 		default:
-			System.err.println("bb");
+
+			return Flux.error(new BadRequest400("Your error request "));
 
 		}
+		return Flux.error(new BadRequest400("Your error request "));
+
 	}
 
-	public void marketObject(Mono<ObjectEntity> objectMono, String a) {
-		objectMono.subscribe(objectEntity -> {
-			objectEntity.getObjectDetails().put("searched", a);
-			this.objectCrud.save(objectEntity);
-		});
+	private Mono<Void> updateObjectEntinty(String objectEntityID, String TargetObjectID, int mode) {
+		return this.objectCrud.findById(objectEntityID).map(entity -> {
+			// System.err.println(entity);
+			ArrayList<String> lst;
+
+			try {
+				if (entity.getObjectDetails() != null) {
+					if ((mode == 0)) {
+						initlst("views", entity);
+
+						lst = (ArrayList<String>) entity.getObjectDetails().get("views");
+						lst.add(TargetObjectID);
+						entity.getObjectDetails().put("views", lst);
+					} else if (mode == 1) {
+						initlst("seen", entity);
+
+						lst = (ArrayList<String>) entity.getObjectDetails().get("seen");
+						lst.add(TargetObjectID);
+						entity.getObjectDetails().put("seen", lst);
+
+					} else {
+
+					}
+				}
+			} catch (NullPointerException n) {
+				System.err.println(n.toString());
+			}
+
+			return entity;
+		}).flatMap(this.objectCrud::save)
+				// .map(entity->new MessageBoundary(entity))
+				.map(ObjectBoundary::new).then();
+
+	}
+
+	private void initlst(String key, ObjectEntity o) {
+		if (o.getObjectDetails().get(key) == null) {
+			o.getObjectDetails().put(key, new ArrayList<String>());
+		}
 	}
 
 }

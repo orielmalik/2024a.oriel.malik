@@ -9,22 +9,20 @@ public class UserBoundary {
 	private Role role;
 	private String username;
 	private String avatar;
-	
+
 	public UserBoundary() {
 	}
-	
+
 	public UserBoundary(UserEntity user) {
 		String splitedUserId[] = user.getId().split(":");
-		
+
 		this.userId = new UserId();
 		if (user.getId() != null)
 			this.userId.setSuperapp(splitedUserId[0]).setEmail(splitedUserId[1]);
-		
-		this.setUsername(user.getUsername())
-			.setRole(user.getRole())
-			.setAvatar(user.getAvatar());
+
+		this.setUsername(user.getUsername()).setRole(user.getRole()).setAvatar(user.getAvatar());
 	}
-		
+
 	public String getAvatar() {
 		return avatar;
 	}
@@ -55,21 +53,18 @@ public class UserBoundary {
 	public Role getRole() {
 		return this.role;
 	}
-	
+
 	public UserBoundary setRole(Role role) {
 		this.role = role;
 		return this;
 	}
-	
+
 	public UserEntity toEntity() {
 		UserEntity entity = new UserEntity();
-		
-		entity.setId(this.getUserId().toString())
-			.setUsername(this.getUsername())
-			.setEmail(this.getUserId().getEmail())
-			.setRole(this.getRole())
-			.setAvatar(this.getAvatar());
-		
+
+		entity.setId(this.getUserId().toString()).setUsername(this.getUsername()).setEmail(this.getUserId().getEmail())
+				.setRole(this.getRole()).setAvatar(this.getAvatar());
+
 		return entity;
 	}
 

@@ -11,13 +11,14 @@ import demo.TargetObject;
 
 @Document(collection = "Commands")
 public class MiniAppCommandEntity {
-	@Id String commandId;
+	@Id
+	String commandId;
 	private String command;
 	private TargetObject targetObject;
 	private Date invocationTimestamp;
 	private InvokedBy invokedBy;
-	private Map<String,Object> commandAttributes;
-	
+	private Map<String, Object> commandAttributes;
+
 	public MiniAppCommandEntity() {
 	}
 
@@ -74,12 +75,5 @@ public class MiniAppCommandEntity {
 		this.commandAttributes = commandAttributes;
 		return this;
 	}
-	
-	
-	
-	
 
-	
-	
-	
 }
