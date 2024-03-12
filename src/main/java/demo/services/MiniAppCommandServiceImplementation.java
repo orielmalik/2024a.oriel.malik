@@ -103,6 +103,9 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 		case ("search"):
 			SearchByCriteriaCommand searchCommand = new SearchByCriteriaCommand(this.objectCrud, m);
 			return searchCommand.execute().flatMap(objectEntity -> {
+				ArrayList<ObjectEntity>lst=new ArrayList<>();
+				lst.add(objectEntity);
+				m.getCommandAttributes().put("results", lst);
 				return updateObjectEntinty(objectEntity.getObjectId(), m.getTargetObject().getObjectId().getId(), 0)
 						.then(updateObjectEntinty(m.getTargetObject().getObjectId().getId(), objectEntity.getObjectId(),
 								1))
