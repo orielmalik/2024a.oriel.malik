@@ -41,9 +41,6 @@ public class SearchByCriteriaCommand implements GeneralCommand {
 
 		case ("search-Bylocation"):
 			String location = (String) miniAppCommandBoundary.getCommandAttributes().get("location");
-			if (Location.valueOf(location) == null) {
-				return Flux.error(new BadRequest400("Not found this location"));
-			}
 			return this.objectcrud.findByLocation(location);
 
 		case ("search-ByPopular"):

@@ -71,6 +71,7 @@ public class MiniAppCommandServiceImplementation implements MiniAppCommandSevice
 							String targetObjectid = command.getTargetObject().getObjectId().getSuperapp() + ":"
 									+ command.getTargetObject().getObjectId().getId();
 							// check if the object is found
+	
 							return this.objectCrud.findByObjectIdAndActiveIsTrue(targetObjectid)
 									.switchIfEmpty(Mono.error(new NotFound404("Object not found")))
 									.flatMapMany(targetObject -> {
