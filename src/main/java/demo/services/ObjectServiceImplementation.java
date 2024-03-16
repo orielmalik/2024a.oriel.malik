@@ -266,6 +266,25 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 				});
 
 	}
+	
+	@Override
+	public Flux<MiniAppCommandBoundary> execute(MiniAppCommandBoundary input) {
+		// get the command from the command name.
+		// *THE COMMAND MUST BE GiveTips or Offers, else the execution will not work*
+		// counselor-GiveTips / counselor-Offers
+		String executionName = input.getCommand().substring(input.getCommand().indexOf('-') + 1);
+
+		CommandExec command;
+		try {
+			// get the command bean.
+			command = this.applicationContext.getBean(executionName, CommandExec.class);
+		} catch (Exception e) {
+			input.getCommandAttributes().put("result", "There is no service name like this.");
+			return Flux.just(input);
+		}
+		// execute the command.
+		return command.execute(input);
+	}
 
 	@Override
 	public Flux<ObjectBoundary> searchbyType(String type, String superApp, String userEmail) {
@@ -344,22 +363,6 @@ public class ObjectServiceImplementation implements ObjectService, CommandExec {
 		});
 	}
 
-	@Override
-	public Flux<MiniAppCommandBoundary> execute(MiniAppCommandBoundary input) {
-		// get the command from the command name.
-		// *THE COMMAND MUST BE GiveTips, else the execution will not work*
-		String executionName = input.getCommand().substring(input.getCommand().indexOf('-') + 1);
-
-		CommandExec command;
-		try {
-			// get the command bean.
-			command = this.applicationContext.getBean(executionName, CommandExec.class);
-		} catch (Exception e) {
-			input.getCommandAttributes().put("result", "There is no service name like this.");
-			return Flux.just(input);
-		}
-		// execute the command.
-		return command.execute(input);
-	}
+	
 
 }
