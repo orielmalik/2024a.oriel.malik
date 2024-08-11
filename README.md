@@ -19,26 +19,4 @@
 - **AssertJ:** Provides a fluent assertion API for testing, ensuring the application behaves as expected.
 - **Gradle Build System:** The project is managed and built using Gradle, a flexible build automation tool.
 
-## Project Structure
-```bash
-find-love-matching/
-│
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/findlove/
-│   │   │       ├── config/         # Spring Boot configuration files
-│   │   │       ├── controller/     # REST controllers
-│   │   │       ├── model/          # Data models
-│   │   │       ├── repository/     # Reactive MongoDB repositories
-│   │   │       └── service/        # Business logic
-│   │   └── resources/
-│   │       ├── application.yml     # Spring Boot application configuration
-│   │       └── static/             # Static resources (HTML, CSS, JS)
-│   └── test/
-│       └── java/
-│           └── com/findlove/
-│               └── tests/          # Unit and integration tests
-│
-├── build.gradle                   # Gradle build configuration
-└── README.md                      # Project documentation
+
